@@ -22,12 +22,22 @@
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MnI-H5-f9f">
                         <rect key="frame" x="6" y="8" width="214" height="304"/>
                     </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vkc-nq-a35">
+                        <rect key="frame" x="194" y="0.0" width="30" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="32" id="haJ-Dr-CHP"/>
+                            <constraint firstAttribute="width" constant="30" id="pzX-rd-1Oc"/>
+                        </constraints>
+                        <state key="normal" backgroundImage="times-circle-regular"/>
+                    </button>
                 </subviews>
             </view>
             <constraints>
                 <constraint firstItem="ZTg-uK-7eu" firstAttribute="trailing" secondItem="MnI-H5-f9f" secondAttribute="trailing" constant="6" id="9LB-cu-xNd"/>
                 <constraint firstItem="MnI-H5-f9f" firstAttribute="centerY" secondItem="ZTg-uK-7eu" secondAttribute="centerY" id="CtB-ej-7Qm"/>
                 <constraint firstItem="MnI-H5-f9f" firstAttribute="centerX" secondItem="ZTg-uK-7eu" secondAttribute="centerX" id="Dln-vc-cOq"/>
+                <constraint firstAttribute="trailing" secondItem="Vkc-nq-a35" secondAttribute="trailing" constant="2" id="PHW-By-8Ky"/>
+                <constraint firstItem="Vkc-nq-a35" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="TIC-87-gXY"/>
                 <constraint firstItem="MnI-H5-f9f" firstAttribute="leading" secondItem="ZTg-uK-7eu" secondAttribute="leading" constant="6" id="k5e-WX-CMF"/>
                 <constraint firstItem="MnI-H5-f9f" firstAttribute="top" secondItem="ZTg-uK-7eu" secondAttribute="top" constant="8" id="lS5-hs-Eq3"/>
                 <constraint firstItem="ZTg-uK-7eu" firstAttribute="bottom" secondItem="MnI-H5-f9f" secondAttribute="bottom" constant="8" id="qkL-bh-5MB"/>
@@ -35,9 +45,13 @@
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <size key="customSize" width="226" height="320"/>
             <connections>
+                <outlet property="btnremove" destination="Vkc-nq-a35" id="V8d-rh-z2c"/>
                 <outlet property="imgview" destination="MnI-H5-f9f" id="2ZQ-V1-KMF"/>
             </connections>
             <point key="canvasLocation" x="60" y="77"/>
         </collectionViewCell>
     </objects>
+    <resources>
+        <image name="times-circle-regular" width="512" height="512"/>
+    </resources>
 </document>

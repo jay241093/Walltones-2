@@ -17,7 +17,8 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
     @IBOutlet weak var lblname: UILabel!
     
     @IBOutlet weak var lblnum: UILabel!
-    
+    @IBOutlet weak var btnlike: UIButton!
+
     @IBOutlet weak var btnplay: UIButton!
     var downloadTask: URLSessionDownloadTask!
     var backgroundSession: URLSession!
@@ -26,14 +27,16 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
     var ringtonelist = [Ringlist]()
     var allringtone = [allringlist]()
     var playerViewController = AVPlayerViewController()
-    
+    var isfromcategory = 0
+    var favidary = NSMutableArray()
+
     @IBOutlet weak var progressDownloadIndicator: UIProgressView!
     
     // MARK: - IBAction Mehtods
     
     @IBAction func closeaction(_ sender: Any) {
         removeAnimate()
-        
+        self.playerViewController.player?.pause()
     }
     
     @IBAction func PlayAction(_ sender: Any) {
@@ -46,9 +49,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
             {
                 if(isplaying == 0)
                 {
-                    
-                    
-                    let dic = ringtonelist[index1]
+                     let dic = ringtonelist[index1]
                     let url = NSURL(string:"http://innoviussoftware.com/walltones/storage/app/" + dic.file)
                     
                     do {
@@ -144,16 +145,59 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         }
         
     }
-    @IBAction func likeaction(_ sender: Any) {
-        
-        var parameters : Parameters = [:]
-        if(ringtonelist.count != 0)
+    @IBAction func likeaction(_ sender: UIButton) {
+        print(favidary)
+        if(ringtonelist.count > 0)
         {
-            parameters = ["wallpaper_id":self.ringtonelist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+     if(index1 >= 0)
+     {
+        if(favidary.contains(self.ringtonelist[self.index1].id))
+        {
+            var parameters : Parameters = [:]
+            if(ringtonelist.count != 0)
+            {
+                parameters = ["ringtone_id":self.ringtonelist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+            }
+            else
+            {
+                parameters = ["ringtone_id":self.allringtone[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+                
+            }
+            
+            StartSpinner()
+            Alamofire.request(webservices().baseurl + "removefavoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+                switch response.result{
+                case .success(let resp):
+                    print(resp)
+                    self.GetFavRingtones()
+                  sender.setBackgroundImage(#imageLiteral(resourceName: "love"), for:.normal)
+                    StopSpinner()
+                    
+                case .failure(let err):
+                    print(err)
+                    print("Failed to change ")
+                    let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+                    self.present(alert, animated: true, completion: nil)
+                    StopSpinner()
+                    
+                    
+                }
+                
+                
+                
+        }
         }
         else
         {
-            parameters = ["wallpaper_id":self.allringtone[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        var parameters : Parameters = [:]
+        if(ringtonelist.count != 0)
+        {
+            parameters = ["ringtone_id":self.ringtonelist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        }
+        else
+        {
+            parameters = ["ringtone_id":self.allringtone[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
             
         }
         
@@ -162,11 +206,12 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
             switch response.result{
             case .success(let resp):
                 print(resp)
-                let alert = webservices.sharedInstance.AlertBuilder(title:  "", message: "Addes to Favourites")
-                self.present(alert, animated: true, completion: nil)
+                sender.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for:.normal)
+
+                self.GetFavRingtones()
+               
                 StopSpinner()
                 
-                StopSpinner()
             case .failure(let err):
                 print(err)
                 print("Failed to change ")
@@ -181,6 +226,90 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
             
         }
         
+        }
+        }
+        }
+        else
+        {
+            if(index1 >= 0)
+                {
+                    if(favidary.contains(self.allringtone[self.index1].id))
+                    {
+                        var parameters : Parameters = [:]
+                        if(allringtone.count != 0)
+                        {
+                            parameters = ["ringtone_id":self.allringtone[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+                        }
+                        else
+                        {
+                            parameters = ["ringtone_id":self.allringtone[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+                            
+                        }
+                        
+                        StartSpinner()
+                        Alamofire.request(webservices().baseurl + "removefavoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+                            switch response.result{
+                            case .success(let resp):
+                                print(resp)
+                                self.GetFavRingtones()
+                                sender.setBackgroundImage(#imageLiteral(resourceName: "love"), for:.normal)
+                                StopSpinner()
+                                
+                            case .failure(let err):
+                                print(err)
+                                print("Failed to change ")
+                                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+                                self.present(alert, animated: true, completion: nil)
+                                StopSpinner()
+                                
+                                
+                            }
+                            
+                            
+                            
+                        }
+                    }
+                    else
+                    {
+                        var parameters : Parameters = [:]
+                        if(ringtonelist.count != 0)
+                        {
+                            parameters = ["ringtone_id":self.allringtone[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+                        }
+                        else
+                        {
+                            parameters = ["ringtone_id":self.allringtone[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+                            
+                        }
+                        
+                        StartSpinner()
+                        Alamofire.request(webservices().baseurl + "favoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+                            switch response.result{
+                            case .success(let resp):
+                                print(resp)
+                                sender.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for:.normal)
+                                
+                                self.GetFavRingtones()
+                                
+                                StopSpinner()
+                                
+                            case .failure(let err):
+                                print(err)
+                                print("Failed to change ")
+                                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+                                self.present(alert, animated: true, completion: nil)
+                                StopSpinner()
+                                
+                                
+                            }
+                            
+                            
+                            
+                        }
+                        
+                    }
+                }
+        }
         
     }
     
@@ -369,6 +498,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
+         GetFavRingtones()
         progressDownloadIndicator.layer.cornerRadius = 8
         progressDownloadIndicator.clipsToBounds = true
         progressDownloadIndicator.transform = progressDownloadIndicator.transform.scaledBy(x: 1, y: 5)
@@ -377,14 +507,21 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         backgroundSession = URLSession(configuration: backgroundSessionConfiguration,delegate: self, delegateQueue: OperationQueue.main)
         progressDownloadIndicator.setProgress(0.0, animated: false)
         showAnimate()
-        
+        btnlike.tag = index1
         
         
         self.view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         if(ringtonelist.count != 0)
         {
             //    pagerview.scrollToItem(at: index1, animated: true)
-            
+            if(favidary.contains(ringtonelist[index1].id))
+            {
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+            }
+            else
+            {
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+            }
             if ringtonelist[index1].downloadCount != nil
             {
                 lblnum.text = " " + ringtonelist[index1].downloadCount!
@@ -401,6 +538,14 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         {
             //   pagerview.scrollToItem(at: index1, animated: true)
             
+            if(favidary.contains(allringtone[index1].id))
+            {
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+            }
+            else
+            {
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+            }
             if allringtone[index1].downloadCount != nil
             {
                 lblnum.text = " " + allringtone[index1].downloadCount!
@@ -441,6 +586,11 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         
         if(ringtonelist.count != 0)
         {
+            if(isfromcategory == 1)
+            {
+                isfromcategory = 0
+                pagerview.scrollToItem(at: index1, animated: false)
+            }
             //  pagerview.scrollToItem(at: index1, animated: true)
             let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
             let dic = ringtonelist[index]
@@ -451,11 +601,17 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
             cell.imageView?.sd_setImage(with: newurl as! URL, placeholderImage:#imageLiteral(resourceName: "default-song"))
             cell.imageView?.contentMode = .scaleAspectFill
             cell.imageView?.clipsToBounds = true
+            
             return cell
             
         }
         else
         {
+            if(isfromcategory == 1)
+            {
+                isfromcategory = 0
+                pagerview.scrollToItem(at: index1, animated: false)
+            }
             //    pagerview.scrollToItem(at: index1, animated: true)
             let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
             let dic = allringtone[index]
@@ -491,10 +647,22 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         {
             if(targetIndex >= 0)
             {
+                 btnlike.tag = targetIndex
                 lblname.text = "Name :" + ringtonelist[targetIndex].name + " \n" +  "categoryName :" + ringtonelist[targetIndex].categoryName
                 if ringtonelist[targetIndex].downloadCount != nil
                 {
                     lblnum.text = " " + ringtonelist[targetIndex].downloadCount!
+                }
+                
+                if(favidary.contains( ringtonelist[targetIndex].id))
+                {
+                    btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+                }
+                else
+                {
+                    btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+                    
+                    
                 }
                 
             }
@@ -502,10 +670,22 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         else{
             if(targetIndex >= 0)
             {
+                
+                 btnlike.tag = targetIndex
                 lblname.text = "Name :" + allringtone[targetIndex].name + " \n" +  "categoryName :" + allringtone[targetIndex].categoryName
                 if allringtone[targetIndex].downloadCount != nil
                 {
                     lblnum.text = " " + allringtone[targetIndex].downloadCount!
+                }
+                if(favidary.contains( allringtone[targetIndex].id))
+                {
+                    btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+                }
+                else
+                {
+                    btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+                    
+                    
                 }
             }
         }
@@ -539,7 +719,49 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
             }
         });
     }
-    
+    func GetFavRingtones()
+    {
+        print(UserDefaults.standard.value(forKey:"userid")!)
+        if AppDelegate.hasConnectivity() == true
+        {
+            StartSpinner()
+            
+            Alamofire.request(webservices().baseurl + "favoriteringtonelist", method: .post, parameters: ["user_id":UserDefaults.standard.value(forKey:"userid")!], encoding: JSONEncoding.default, headers: nil).responseJSONDecodable{(response:DataResponse<FavouriteRingtone>) in
+                switch response.result{
+                    
+                case .success(let resp):
+                    print(resp)
+                    StopSpinner()
+                    if(resp.errorCode == 0)
+                    {
+                        self.favidary.removeAllObjects()
+                        let data = resp.data
+                        for dic in data
+                        {
+                           self.favidary.add(dic.id)
+                        }
+                        
+                    }
+                    
+                case .failure(let err):
+                    let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load Fovourite rintone list")
+                    self.present(alert, animated: true, completion: nil)
+                    print(err)
+                    StopSpinner()
+                }
+            }
+            
+        }
+        else
+        {
+            
+            webservices.sharedInstance.nointernetconnection()
+            NSLog("No Internet Connection")
+        }
+        
+        
+        
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

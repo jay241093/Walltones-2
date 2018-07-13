@@ -77,7 +77,7 @@ class sidemenuViewController: UIViewController,UITableViewDelegate,UITableViewDa
         
         let str = reuseid.object(at: indexPath.row) as! String
         let dvc:UITableViewCell = tableView.dequeueReusableCell(withIdentifier:str, for: indexPath)
-        var nameary = ["Wallpaper","Rintone","Favourite List","Help","Setting","Logout"]
+        var nameary = ["Wallpapers","Ringtones","Favourite List","Help","Settings","Logout"]
         
         var img = ["Wallpaper","Musix","Fav","Help","Setting","Logout"]
         dvc.textLabel?.text = nameary[indexPath.row]

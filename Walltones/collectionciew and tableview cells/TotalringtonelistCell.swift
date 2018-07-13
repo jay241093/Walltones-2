@@ -13,19 +13,13 @@ class TotalringtonelistCell: UITableViewCell {
     @IBOutlet weak var lblname: UILabel!
     @IBOutlet weak var lbldes: UILabel!
     @IBOutlet weak var btnlike: UIButton!
-    @IBOutlet weak var view: UIView!
+    @IBOutlet weak var view: RoundCornerProgressView!
+    
+    
    var isliked = 0
     @IBAction func btnlikeaction(_ sender: Any) {
-        if(isliked == 0)
-        {
-        isliked = 1
-        btnlike.setImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
-        }
-        else
-        {
-       btnlike.setImage(#imageLiteral(resourceName: "heart-regular"), for: .normal)
-       isliked = 0
-        }
+        
+      
         
     }
     

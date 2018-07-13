@@ -89,6 +89,9 @@ class SignUpVC: UIViewController ,UIImagePickerControllerDelegate,UINavigationCo
     }
     
     
+    @IBAction func login(_ sender: Any) {
+      self.navigationController?.popViewController(animated: true)
+    }
     
     
     

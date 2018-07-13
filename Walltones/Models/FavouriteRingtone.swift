@@ -22,7 +22,7 @@ struct FavouriteRingtone: Codable {
 struct FavRinglist: Codable {
     let id, name, itemID: String
     let description: String?
-    let categoryName, file, icon, downloadCount: String
+    let categoryName, file, icon, downloadCount: String?
     let keywords: String
     
     enum CodingKeys: String, CodingKey {

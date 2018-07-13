@@ -19,10 +19,12 @@ class WallpaperDetilVC: UIViewController ,FSPagerViewDelegate , FSPagerViewDataS
     
     var wallpaperlistnew = [Datum1]()
     
+    @IBOutlet weak var btnlike: UIButton!
     
     var Allwallpaperlist = [wallpaperlist]()
 var index1 = 0
-    
+ var isfromcategory = 0
+var favidary = NSMutableArray()
     fileprivate let transformerTypes: [FSPagerViewTransformerType] = [.crossFading,
                                                                       .zoomOut,
                                                                       .depth,
@@ -199,30 +201,119 @@ var index1 = 0
     }
     
     
-    @IBAction func likeaction(_ sender: Any) {
+    @IBAction func likeaction(_ sender: UIButton) {
         var parameters : Parameters = [:]
+if(self.wallpaperlistnew.count > 0)
+{
+ if(favidary.contains(self.wallpaperlistnew[index1].id))
+ {
+    
+    if(wallpaperlistnew.count != 0)
+    {
+        parameters = ["wallpaper_id":self.wallpaperlistnew[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+    }
+    else
+    {
         
-        if(wallpaperlistnew.count != 0)
+        parameters = ["wallpaper_id":self.wallpaperlistnew[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+        
+    }
+    
+    StartSpinner()
+    Alamofire.request(webservices().baseurl + "removefavoritewallpaper", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+        switch response.result{
+        case .success(let resp):
+            print(resp)
+           
+            self.GetFavWallpaper()
+            sender.setBackgroundImage(#imageLiteral(resourceName: "love"), for:.normal)
+
+            StopSpinner()
+        case .failure(let err):
+            print(err)
+            print("Failed to change ")
+            let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+            self.present(alert, animated: true, completion: nil)
+            StopSpinner()
+            
+            
+        }
+        
+        
+        
+    }
+ }
+    else{
+    
+    if(wallpaperlistnew.count != 0)
+    {
+        parameters = ["wallpaper_id":self.wallpaperlistnew[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+    }
+    else
+    {
+        
+        parameters = ["wallpaper_id":self.Allwallpaperlist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+        
+    }
+    
+    StartSpinner()
+    Alamofire.request(webservices().baseurl + "favoritewallpaper", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+        switch response.result{
+        case .success(let resp):
+            print(resp)
+            sender.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for:.normal)
+
+            self.GetFavWallpaper()
+            
+            StopSpinner()
+        case .failure(let err):
+            print(err)
+            print("Failed to change ")
+            let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+            self.present(alert, animated: true, completion: nil)
+            StopSpinner()
+            
+            
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
+        }
+    
+        }
+        
+    else
+{
+    if(favidary.contains(self.Allwallpaperlist[index1].id))
+    {
+        if(Allwallpaperlist.count != 0)
         {
-               parameters = ["wallpaper_id":self.wallpaperlistnew[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+            parameters = ["wallpaper_id":self.Allwallpaperlist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
         }
         else
         {
-        
-           parameters = ["wallpaper_id":self.Allwallpaperlist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+            
+            parameters = ["wallpaper_id":self.Allwallpaperlist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
             
             
         }
-     
+        
         StartSpinner()
-        Alamofire.request(webservices().baseurl + "favoritewallpaper", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+        Alamofire.request(webservices().baseurl + "removefavoritewallpaper", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
             switch response.result{
             case .success(let resp):
                 print(resp)
-                let alert = webservices.sharedInstance.AlertBuilder(title:  "", message: "Addes to Favourites")
-                self.present(alert, animated: true, completion: nil)
-                StopSpinner()
-              
+                sender.setBackgroundImage(#imageLiteral(resourceName: "love"), for:.normal)
+
+                self.GetFavWallpaper()
+                
                 StopSpinner()
             case .failure(let err):
                 print(err)
@@ -238,9 +329,56 @@ var index1 = 0
             
         }
     }
+    else{
+        
+        if(Allwallpaperlist.count != 0)
+        {
+            parameters = ["wallpaper_id":self.Allwallpaperlist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        }
+        else
+        {
+            
+            parameters = ["wallpaper_id":self.Allwallpaperlist[self.index1].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+            
+            
+        }
+        
+        StartSpinner()
+        Alamofire.request(webservices().baseurl + "favoritewallpaper", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+            switch response.result{
+            case .success(let resp):
+                print(resp)
+                sender.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for:.normal)
+
+                self.GetFavWallpaper()
+                
+                StopSpinner()
+            case .failure(let err):
+                print(err)
+                print("Failed to change ")
+                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+                self.present(alert, animated: true, completion: nil)
+                StopSpinner()
+                
+                
+            }
+            
+            
+            
+        }
+        
+        
+        
+        
+    }
+    
+        }
+        
+    }
     
     @IBAction func closeaction(_ sender: Any) {
         removeAnimate()
+    
     }
     
     
@@ -265,6 +403,11 @@ var index1 = 0
         
     if(wallpaperlistnew.count != 0)
     {
+        if(isfromcategory == 1)
+        {
+            isfromcategory = 0
+        pagerview.scrollToItem(at: index1, animated: false)
+        }
         let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
         let dic = wallpaperlistnew[index]
         
@@ -279,7 +422,11 @@ var index1 = 0
         }
         else
     {
-        
+        if(isfromcategory == 1)
+        {
+            isfromcategory = 0
+            pagerview.scrollToItem(at: index1, animated: false)
+        }
         let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
         let dic = Allwallpaperlist[index]
         
@@ -349,6 +496,16 @@ var index1 = 0
         {
             lblnum.text = "0"
         }
+         if(favidary.contains( wallpaperlistnew[targetIndex].id))
+         {
+            btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+            }
+           else
+         {
+            btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+
+            
+            }
         }
         }
         else{
@@ -363,6 +520,17 @@ var index1 = 0
             {
                lblnum.text = "0"
                 }
+                if(favidary.contains( Allwallpaperlist[targetIndex].id))
+                {
+                    btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+                }
+                else
+                {
+                    btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+                    
+                    
+                }
+                
             }
         }
     }
@@ -374,41 +542,112 @@ var index1 = 0
         
         showAnimate()
         self.view.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+GetFavWallpaper()
+//      if(wallpaperlistnew.count != 0)
+//      {
+//        if(favidary.contains( wallpaperlistnew[index1].id))
+//        {
+//            btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+//        }
+//        else
+//        {
+//            btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+//        }
+//
+//        if wallpaperlistnew[index1].downloadCount != nil
+//        {
+//            lblnum.text = " " + wallpaperlistnew[index1].downloadCount!
+//        }
+//        else{
+//
+//            lblnum.text = " 0"
+//
+//        }
+//        lblname.text = "Name :" + wallpaperlistnew[index1].name + " \n" +  "categoryName :" + wallpaperlistnew[index1].categoryName!
+//        }
+//        if(Allwallpaperlist.count != 0)
+//        {
+//            if(favidary.contains(Allwallpaperlist[index1].id))
+//            {
+//                btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+//            }
+//            else
+//            {
+//                btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+//            }
+//
+//
+//
+//            if Allwallpaperlist[index1].downloadCount != nil
+//            {
+//                lblnum.text = " " + Allwallpaperlist[index1].downloadCount!
+//            }
+//            else{
+//
+//                lblnum.text = " 0"
+//
+//            }
+//            lblname.text = "Name :" + Allwallpaperlist[index1].name + " \n" +  "categoryName :" + Allwallpaperlist[index1].categoryName
+//            navigationController?.navigationBar.isHidden = true
+//
+//        }
+        
+        // Do any additional setup after loading the view.
+    }
 
-      if(wallpaperlistnew.count != 0)
-      {
-        if wallpaperlistnew[0].downloadCount != nil
+    
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+        if(wallpaperlistnew.count != 0)
         {
-            lblnum.text = " " + wallpaperlistnew[0].downloadCount!
-        }
-        else{
-            
-            lblnum.text = " 0"
-
-        }
-        lblname.text = "Name :" + wallpaperlistnew[0].name + " \n" +  "categoryName :" + wallpaperlistnew[0].categoryName!
-        }
-        if(Allwallpaperlist.count != 0)
-        {
-            if Allwallpaperlist[0].downloadCount != nil
+            if(favidary.contains( wallpaperlistnew[index1].id))
             {
-                lblnum.text = " " + Allwallpaperlist[0].downloadCount!
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+            }
+            else
+            {
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+            }
+            
+            if wallpaperlistnew[index1].downloadCount != nil
+            {
+                lblnum.text = " " + wallpaperlistnew[index1].downloadCount!
             }
             else{
                 
                 lblnum.text = " 0"
                 
             }
-            lblname.text = "Name :" + Allwallpaperlist[0].name + " \n" +  "categoryName :" + Allwallpaperlist[0].categoryName
+            lblname.text = "Name :" + wallpaperlistnew[index1].name + " \n" +  "categoryName :" + wallpaperlistnew[index1].categoryName!
+        }
+        if(Allwallpaperlist.count != 0)
+        {
+            if(favidary.contains(Allwallpaperlist[index1].id))
+            {
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+            }
+            else
+            {
+                btnlike.setBackgroundImage(#imageLiteral(resourceName: "love"), for: .normal)
+            }
+            
+            
+            
+            if Allwallpaperlist[index1].downloadCount != nil
+            {
+                lblnum.text = " " + Allwallpaperlist[index1].downloadCount!
+            }
+            else{
+                
+                lblnum.text = " 0"
+                
+            }
+            lblname.text = "Name :" + Allwallpaperlist[index1].name + " \n" +  "categoryName :" + Allwallpaperlist[index1].categoryName
             navigationController?.navigationBar.isHidden = true
             
         }
-        
-        // Do any additional setup after loading the view.
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = true
-
     }
     
     func showAnimate()
@@ -451,7 +690,52 @@ var index1 = 0
             present(ac, animated: true)
         }
     }
-
+    func GetFavWallpaper()
+    {
+        
+        print(UserDefaults.standard.value(forKey:"userid")!)
+        if AppDelegate.hasConnectivity() == true
+        {
+            StartSpinner()
+            
+            Alamofire.request(webservices().baseurl + "favoritewallpaperlist", method: .post, parameters: ["user_id":UserDefaults.standard.value(forKey:"userid")!], encoding: JSONEncoding.default, headers: nil).responseJSONDecodable{(response:DataResponse<FavouriteWallpaer>) in
+                switch response.result{
+                    
+                case .success(let resp):
+                    print(resp)
+                    StopSpinner()
+                    if(resp.errorCode == 0)
+                    {
+                        let data = resp.data
+                        self.favidary.removeAllObjects()
+                        for dic in data
+                        {
+                            self.favidary.add(dic.id!)
+                            
+                        }
+                        
+                        
+                    }
+                    
+                case .failure(let err):
+                    let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load Fovourite wallpaper list")
+                    self.present(alert, animated: true, completion: nil)
+                    print(err)
+                    StopSpinner()
+                }
+            }
+            
+        }
+        else
+        {
+            
+            webservices.sharedInstance.nointernetconnection()
+            NSLog("No Internet Connection")
+        }
+        
+        
+        
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

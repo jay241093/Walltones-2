@@ -12,6 +12,7 @@ class WallpaperListCell: UICollectionViewCell {
 
     @IBOutlet weak var imgview: UIImageView!
     
+    @IBOutlet weak var btnremove: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

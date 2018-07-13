@@ -64,6 +64,11 @@
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
+		<key>TCProgressBar.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 </dict>
 </plist>

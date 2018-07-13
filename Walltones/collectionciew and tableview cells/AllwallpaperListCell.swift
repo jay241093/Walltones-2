@@ -10,8 +10,17 @@ import UIKit
 
 class AllwallpaperListCell: UITableViewCell {
 
+    @IBOutlet weak var view: UIView!
     
+    @IBOutlet weak var height: NSLayoutConstraint!
     @IBOutlet weak var imgview: UIImageView!
+    
+    @IBOutlet weak var lblname: UILabel!
+    @IBOutlet weak var lbldes: UILabel!
+    
+    @IBOutlet weak var lbldowncount: UILabel!
+    @IBOutlet weak var imgfav: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

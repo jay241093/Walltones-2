@@ -11,9 +11,16 @@ import Alamofire
 import ScrollPager
 import AVKit
 import AVFoundation
+func setShadow(view: UIView)
+{
+    view.layer.shadowColor = UIColor.lightGray.cgColor
+    view.layer.shadowOpacity = 0.5
+    view.layer.shadowOffset = CGSize(width: 2.0, height: 2.0)
+    view.layer.shadowRadius = 2
+}
 
 
-class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionViewDataSource , UITableViewDataSource , UITableViewDelegate , UISearchBarDelegate{
+class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionViewDataSource , UITableViewDataSource , UITableViewDelegate , UISearchBarDelegate, ScrollPagerDelegate{
    
  var playerViewController = AVPlayerViewController()
     @IBOutlet weak var pager: ScrollPager!
@@ -26,16 +33,19 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
     @IBOutlet weak var tblview: UITableView!
     
     var Categorylist = [RingtoneCategory]()
-    
+    var newCategorylist = [RingtoneCategory]()
+var favidary = NSMutableArray()
     var Ringtonelist = [Ringlist]()
 
     var AllRingtonelist = [allringlist]()
+    var newAllRingtonelist = [allringlist]()
 
     var ringtonelist = UITableView()
     var isplaying = 0
     var issearch = 0
     var  searchbar = UISearchBar()
-
+    var playbackSlider:UISlider?
+var iscategory = true
     @IBOutlet weak var btnsearch: UIButton!
     
     @IBAction func searchaction(_ sender: Any) {
@@ -56,11 +66,12 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
             issearch = 0
             btnsearch.setImage(#imageLiteral(resourceName: "search-solid (2)"), for: .normal)
             let label = UILabel()
-            label.text = "Settings"
+            label.text = "Ringtones"
             label.font = UIFont(name:"HelveticaNeue-Bold", size: 18.0)
             self.navigationItem.titleView = label
 
-
+            AllRingtonelist = newAllRingtonelist
+            ringtonelist.reloadData()
             
         }
         
@@ -68,11 +79,14 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        tblview.separatorStyle = .none
+        tblview.separatorStyle = .none
+
         navigationController?.navigationBar.isHidden = false
         let view: UIView = viewlist
         getallringtonelist()
         GetringtoneCategory()
+         GetFavRingtones()
         
         ringtonelist.delegate = self
         ringtonelist.dataSource = self
@@ -87,6 +101,88 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
             
         }
         // Do any additional setup after loading the view.
+    }
+    //MARK:- Search bar delegate methods
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if(iscategory == false){
+            if(searchText != "")
+            {
+                AllRingtonelist.removeAll()
+                for dic in newAllRingtonelist
+                {
+                    if(dic.name.lowercased().contains(searchText.lowercased()))
+                    {
+                        AllRingtonelist.append(dic)
+                    }
+                    
+                }
+                
+                ringtonelist.reloadData()
+                
+            }
+            else{
+                AllRingtonelist = newAllRingtonelist
+                ringtonelist.reloadData()
+            }
+        }
+        else{
+            if(searchText != "")
+            {
+                Categorylist.removeAll()
+                for dic in newCategorylist
+                {
+                    if(dic.name.lowercased().contains(searchText.lowercased()))
+                    {
+                        Categorylist.append(dic)
+                    }
+                    
+                }
+                
+                collectionview.reloadData()
+                
+            }
+            else{
+                Categorylist = newCategorylist
+                collectionview.reloadData()
+            }
+            
+        }
+        
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        
+        if(iscategory == false){
+            AllRingtonelist = newAllRingtonelist
+            ringtonelist.reloadData()
+        }
+        else
+        {
+            Categorylist = newCategorylist
+            collectionview.reloadData()
+            
+        }
+    }
+    
+    
+    
+    //MARK:- Scrollpager bar delegate methods
+    func scrollPager(scrollPager: ScrollPager, changedIndex: Int) {
+        
+        if(changedIndex == 0)
+        {
+            iscategory = true
+            
+        }
+        else
+        {
+            iscategory = false
+            ringtonelist.reloadData()
+
+        }
+        
+        
     }
 
     
@@ -110,8 +206,8 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
         dvc.lblcategoryname.text = dic.name
         let url = "http://innoviussoftware.com/walltones/storage/app/" + dic.tabIcon
         var newurl = NSURL(string: url)
-        
         dvc.imgview.sd_setImage(with: newurl as! URL, placeholderImage:#imageLiteral(resourceName: "side"))
+        
         return dvc
     }
     
@@ -147,9 +243,25 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
         dvc.selectionStyle = .none
         dvc.lblname.text = dic.name
         dvc.lbldes.text = dic.description
-       
+       setShadow(view: dvc.view)
+        dvc.view.layer.cornerRadius = 8.0
         dvc.btnplay.addTarget(self, action:#selector(playaudiomethod), for: .touchUpInside)
         dvc.btnplay.tag = indexPath.row
+            dvc.btnlike.tag = indexPath.row
+         if(favidary.contains(dic.id))
+         {
+            dvc.btnlike.setImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+            dvc.btnlike.addTarget(self, action: #selector(RemoveFavourite1), for:.touchUpInside)
+
+         }
+         else
+         {
+            dvc.btnlike.setImage(#imageLiteral(resourceName: "heart-regular"), for: .normal)
+            dvc.btnlike.addTarget(self, action: #selector(AddtoFavourite1), for:.touchUpInside)
+
+            }
+            
+            
             return dvc
 
         }
@@ -158,20 +270,165 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
             
             var dvc: TotalringtonelistCell = tableView.dequeueReusableCell(withIdentifier:"cell", for: indexPath) as! TotalringtonelistCell
             var colorary = [UIColor(red:0.75, green:0.75, blue:0.75, alpha:1.0),]
-            
+            setShadow(view: dvc.view)
+            dvc.view.layer.cornerRadius = 8.0
             let dic = AllRingtonelist[indexPath.row]
             dvc.lblname.text = dic.name
             dvc.lbldes.text = dic.description
             dvc.selectionStyle = .none
-
+            dvc.btnlike.tag = indexPath.row
             dvc.btnplay.addTarget(self, action:#selector(playaudiomethod1), for: .touchUpInside)
             dvc.btnplay.tag = indexPath.row
+            if(favidary.contains(dic.id))
+            {
+                dvc.btnlike.setImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+                dvc.btnlike.addTarget(self, action: #selector(RemoveFavourite), for:.touchUpInside)
+
+            }
+            else
+            {
+                dvc.btnlike.setImage(#imageLiteral(resourceName: "heart-regular"), for: .normal)
+                dvc.btnlike.addTarget(self, action: #selector(AddtoFavourite), for:.touchUpInside)
+
+            }
+            
             return dvc
 
         }
         
 
     }
+    
+    @objc func AddtoFavourite1(sender:UIButton)
+    {
+        
+        var parameters:Parameters = ["ringtone_id":self.Ringtonelist[sender.tag].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+        StartSpinner()
+        Alamofire.request(webservices().baseurl + "favoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+            switch response.result{
+            case .success(let resp):
+                print(resp)
+                let index = NSIndexPath(row: sender.tag, section: 0)
+                let cell:RIngtonelistCell = self.tblview.cellForRow(at: index as IndexPath) as! RIngtonelistCell
+                cell.btnlike.setImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+                StopSpinner()
+                self.GetFavRingtones()
+               
+                
+                StopSpinner()
+            case .failure(let err):
+                print(err)
+                print("Failed to change ")
+                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to add")
+                self.present(alert, animated: true, completion: nil)
+                StopSpinner()
+                
+                
+            }
+            
+            
+            
+        }
+    }
+    @objc func RemoveFavourite(sender:UIButton)
+    {
+        var parameters:Parameters = ["ringtone_id":self.AllRingtonelist[sender.tag].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+        StartSpinner()
+        Alamofire.request(webservices().baseurl + "removefavoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+            switch response.result{
+            case .success(let resp):
+                print(resp)
+                let index = NSIndexPath(row: sender.tag, section: 0)
+                let cell:TotalringtonelistCell = self.ringtonelist.cellForRow(at: index as IndexPath) as! TotalringtonelistCell
+                cell.btnlike.setImage(#imageLiteral(resourceName: "heart-regular"), for: .normal)
+                StopSpinner()
+                self.GetFavRingtones()
+                
+                
+                StopSpinner()
+            case .failure(let err):
+                print(err)
+                print("Failed to change ")
+                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to remove")
+                self.present(alert, animated: true, completion: nil)
+                StopSpinner()
+                
+                
+            }
+            
+            
+            
+        }
+    }
+    @objc func RemoveFavourite1(sender:UIButton)
+    {
+        
+        var parameters:Parameters = ["ringtone_id":self.Ringtonelist[sender.tag].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+        StartSpinner()
+        Alamofire.request(webservices().baseurl + "removefavoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+            switch response.result{
+            case .success(let resp):
+                print(resp)
+                let index = NSIndexPath(row: sender.tag, section: 0)
+                let cell:RIngtonelistCell = self.tblview.cellForRow(at: index as IndexPath) as! RIngtonelistCell
+                cell.btnlike.setImage(#imageLiteral(resourceName: "heart-regular"), for: .normal)
+                StopSpinner()
+                self.GetFavRingtones()
+                
+                
+                StopSpinner()
+            case .failure(let err):
+                print(err)
+                print("Failed to change ")
+                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to remove")
+                self.present(alert, animated: true, completion: nil)
+                StopSpinner()
+                
+                
+            }
+            
+            
+            
+        }
+    }
+    
+    
+    
+    @objc func AddtoFavourite(sender:UIButton)
+{
+    
+    var parameters:Parameters = ["ringtone_id":self.AllRingtonelist[sender.tag].id ,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+    
+  StartSpinner()
+ Alamofire.request(webservices().baseurl + "favoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+    switch response.result{
+    case .success(let resp):
+        print(resp)
+        let index = NSIndexPath(row: sender.tag, section: 0)
+        let cell:TotalringtonelistCell = self.ringtonelist.cellForRow(at: index as IndexPath) as! TotalringtonelistCell
+        cell.btnlike.setImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
+        StopSpinner()
+        self.GetFavRingtones()
+        
+        StopSpinner()
+    case .failure(let err):
+        print(err)
+        print("Failed to change ")
+        let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to add")
+        self.present(alert, animated: true, completion: nil)
+        StopSpinner()
+        
+        
+    }
+    
+    
+    
+}
+    
+}
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return 109
@@ -185,9 +442,13 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
         
         self.playerViewController.player?.pause()
         let popOverConfirmVC = self.storyboard?.instantiateViewController(withIdentifier: "RingtoneDetailVC") as! RingtoneDetailVC
+        popOverConfirmVC.index1 = indexPath.row
+        popOverConfirmVC.isfromcategory = 1
+        popOverConfirmVC.favidary = self.favidary
         popOverConfirmVC.ringtonelist = Ringtonelist
         self.addChildViewController(popOverConfirmVC)
         popOverConfirmVC.index1 =  indexPath.row
+        
         popOverConfirmVC.view.frame = self.view.frame
         self.view.center = popOverConfirmVC.view.center
         self.view.addSubview(popOverConfirmVC.view)
@@ -202,6 +463,8 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
     {
         self.playerViewController.player?.pause()
         let popOverConfirmVC = self.storyboard?.instantiateViewController(withIdentifier: "RingtoneDetailVC") as! RingtoneDetailVC
+        popOverConfirmVC.isfromcategory = 1
+        popOverConfirmVC.favidary = self.favidary
         popOverConfirmVC.allringtone = AllRingtonelist
         popOverConfirmVC.index1 =  indexPath.row
         self.addChildViewController(popOverConfirmVC)
@@ -246,6 +509,13 @@ class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionVi
                 self.playerViewController.player = AVPlayer(url: videoURL as! URL) as AVPlayer
                 self.playerViewController.player?.play()
                 cell.btnplay.setImage(#imageLiteral(resourceName: "pause-circle-solid"), for: .normal)
+                let playerItem:AVPlayerItem = AVPlayerItem(url: videoURL! as URL)
+                var player = AVPlayer(playerItem: playerItem)
+              
+                
+                //playbackSlider!.addTarget(self, action: "playbackSliderValueChanged:", for: .valueChanged)
+                
+                
             }
             isplaying = 1
 
@@ -352,6 +622,7 @@ func  GetringtoneCategory()
                 StopSpinner()
                 if(resp.errorCode == 0)
                 {
+                    self.newCategorylist = resp.data
                     self.Categorylist = resp.data
                  self.collectionview.reloadData()
                     if(self.Categorylist.count > 0)
@@ -437,6 +708,7 @@ func  GetringtoneCategory()
                     if(resp.errorCode == 0)
                     {
                     
+                        self.newAllRingtonelist = resp.data
                         self.AllRingtonelist = resp.data
                         self.ringtonelist.reloadData()
                     }
@@ -462,7 +734,52 @@ func  GetringtoneCategory()
         
     }
     
-    
+    func GetFavRingtones()
+    {
+        print(UserDefaults.standard.value(forKey:"userid")!)
+        if AppDelegate.hasConnectivity() == true
+        {
+            StartSpinner()
+            
+            Alamofire.request(webservices().baseurl + "favoriteringtonelist", method: .post, parameters: ["user_id":UserDefaults.standard.value(forKey:"userid")!], encoding: JSONEncoding.default, headers: nil).responseJSONDecodable{(response:DataResponse<FavouriteRingtone>) in
+                switch response.result{
+                    
+                case .success(let resp):
+                    print(resp)
+                    StopSpinner()
+                    self.favidary.removeAllObjects()
+                    if(resp.errorCode == 0)
+                    {
+                        let data = resp.data
+                        for dic in data
+                        {
+                            
+                            self.favidary.add(dic.id)
+                            
+                        }
+            
+                        
+                    }
+                    
+                case .failure(let err): break
+                let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load Fovourite wallpaper list")
+                self.present(alert, animated: true, completion: nil)
+                print(err)
+                StopSpinner()
+                }
+            }
+            
+        }
+        else
+        {
+            
+            webservices.sharedInstance.nointernetconnection()
+            NSLog("No Internet Connection")
+        }
+        
+        
+        
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

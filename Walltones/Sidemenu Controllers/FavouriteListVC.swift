@@ -85,7 +85,9 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
     
         dvc.backgroundColor = UIColor.white
         dvc.imgview.sd_setImage(with: newurl as! URL, placeholderImage: UIImage(named: "default-user"))
-
+         dvc.btnremove.tag = indexPath.row
+        
+        dvc.btnremove.addTarget(self, action:#selector(removefavouritewallpaper), for: .touchUpInside)
         
         return dvc
     }
@@ -127,11 +129,12 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var dvc: TotalringtonelistCell = tableView.dequeueReusableCell(withIdentifier:"cell", for: indexPath) as! TotalringtonelistCell
         var colorary = [UIColor(red:0.75, green:0.75, blue:0.75, alpha:1.0),]
-        
+        dvc.selectionStyle = .none
          let dic = FavRingary[indexPath.row]
         dvc.lblname.text = dic.name
         dvc.lbldes.text =  dic.description
-        
+        setShadow(view: dvc.view)
+
        dvc.btnplay.addTarget(self, action:#selector(playaudiomethod), for: .touchUpInside)
         dvc.btnplay.tag = indexPath.row
         dvc.btnlike.isHidden = true
@@ -143,6 +146,28 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
         
     }
     
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if (editingStyle == UITableViewCellEditingStyle.delete) {
+            var refreshAlert = UIAlertController(title: nil, message: "Are you sure you want to remove?", preferredStyle: UIAlertControllerStyle.alert)
+            
+            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                self.RemoveFavouriteRingtone(id: self.FavRingary[indexPath.row].id)
+            }))
+            
+            refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            }))
+            
+            present(refreshAlert, animated: true, completion: nil)
+        }
+    }
+    
+    
     @objc func playaudiomethod(sender:UIButton)
     {
         
@@ -153,10 +178,10 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
             
             let indexPath = IndexPath(row: sender.tag, section: 0)
             
-            var cell: RIngtonelistCell = ringtonelist.cellForRow(at: indexPath) as!RIngtonelistCell
+            var cell: TotalringtonelistCell = ringtonelist.cellForRow(at: indexPath) as!TotalringtonelistCell
             
             let dic = FavRingary[sender.tag]
-            let url = NSURL(string:"http://innoviussoftware.com/walltones/storage/app/" + dic.file)
+            let url = NSURL(string:"http://innoviussoftware.com/walltones/storage/app/" + dic.file!)
             
             do {
                 
@@ -166,9 +191,9 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
                 playerViewController = AVPlayerViewController()
                 
                 DispatchQueue.main.async() {
-                    self.playerViewController.player = AVPlayer(url: videoURL as! URL) as AVPlayer
+                    self.playerViewController.player = AVPlayer(url: videoURL! as URL) as AVPlayer
                     self.playerViewController.player?.play()
-                    cell.btnplay.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+                    cell.btnplay.setImage(#imageLiteral(resourceName: "pause-circle-solid"), for: .normal)
                 }
                 isplaying = 1
                 
@@ -192,9 +217,9 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
             
             let indexPath = IndexPath(row: sender.tag, section: 0)
             
-            var cell: RIngtonelistCell = ringtonelist.cellForRow(at: indexPath) as!RIngtonelistCell
+            var cell: TotalringtonelistCell = ringtonelist.cellForRow(at: indexPath) as!TotalringtonelistCell
             
-            cell.btnplay.setImage(#imageLiteral(resourceName: "Play"), for: .normal)
+            cell.btnplay.setImage(#imageLiteral(resourceName: "unnamed"), for: .normal)
             
             self.playerViewController.player?.pause()
         }
@@ -270,8 +295,8 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
                         
                     }
                     
-                case .failure(let err): break
-                let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load Fovourite wallpaper list")
+                case .failure(let err):
+                let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load Fovourite rintone list")
                 self.present(alert, animated: true, completion: nil)
                 print(err)
                 StopSpinner()
@@ -287,6 +312,83 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
         }
         
         
+        
+    }
+    
+    
+    @objc func removefavouritewallpaper(sender:UIButton)
+    {
+      print(sender.tag)
+     
+            var refreshAlert = UIAlertController(title: nil, message: "Are you sure you want to remove?", preferredStyle: UIAlertControllerStyle.alert)
+            
+            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                self.RemoveFavouriteWallpaper(id: self.FavWallary[sender.tag].id!)
+            }))
+            
+            refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            }))
+            
+            present(refreshAlert, animated: true, completion: nil)
+    
+        
+    }
+    
+    
+    
+    func RemoveFavouriteWallpaper(id:String)
+    {
+        var parameters:Parameters = ["wallpaper_id":id,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+        StartSpinner()
+        Alamofire.request(webservices().baseurl + "removefavoritewallpaper", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+            switch response.result{
+            case .success(let resp):
+                print(resp)
+                self.GetFavWallpaper()
+                
+                StopSpinner()
+            case .failure(let err):
+                print(err)
+                print("Failed to change ")
+                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+                self.present(alert, animated: true, completion: nil)
+                StopSpinner()
+                
+                
+            }
+            
+            
+            
+        }
+        
+    }
+    
+    func RemoveFavouriteRingtone(id:String)
+    {
+        var parameters:Parameters = ["ringtone_id":id,"user_id":UserDefaults.standard.value(forKey:"userid") as! Int]
+        
+        StartSpinner()
+        Alamofire.request(webservices().baseurl + "removefavoriteringtone", method: .post, parameters:parameters, encoding: JSONEncoding.default, headers:nil).responseJSON{ (response:DataResponse<Any>) in
+            switch response.result{
+            case .success(let resp):
+                print(resp)
+                self.GetFavRingtones()
+                
+                StopSpinner()
+            case .failure(let err):
+                print(err)
+                print("Failed to change ")
+                let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to like")
+                self.present(alert, animated: true, completion: nil)
+                StopSpinner()
+                
+                
+            }
+            
+            
+            
+        }
         
     }
     

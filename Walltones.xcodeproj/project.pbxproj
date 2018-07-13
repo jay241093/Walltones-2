@@ -10,6 +10,7 @@
 		212FD4D420F318350080208C /* RingtoneDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212FD4D320F318350080208C /* RingtoneDetailVC.swift */; };
 		212FD4D620F33AB80080208C /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212FD4D520F33AB80080208C /* SettingsVC.swift */; };
 		212FD4D820F372E90080208C /* ImagepopUP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212FD4D720F372E90080208C /* ImagepopUP.swift */; };
+		213912DF20F7471F009AF23C /* RoundCornerProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213912DE20F7471F009AF23C /* RoundCornerProgressView.swift */; };
 		214510FD20ECA97700956ECC /* webservices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214510FC20ECA97700956ECC /* webservices.swift */; };
 		2145110020ECD3B600956ECC /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 214510FF20ECD3B600956ECC /* SWRevealViewController.m */; };
 		2145110320ECD68F00956ECC /* sidemenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2145110220ECD68F00956ECC /* sidemenuViewController.swift */; };
@@ -77,6 +78,7 @@
 		212FD4D320F318350080208C /* RingtoneDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingtoneDetailVC.swift; sourceTree = "<group>"; };
 		212FD4D520F33AB80080208C /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		212FD4D720F372E90080208C /* ImagepopUP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagepopUP.swift; sourceTree = "<group>"; };
+		213912DE20F7471F009AF23C /* RoundCornerProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundCornerProgressView.swift; sourceTree = "<group>"; };
 		214510FB20ECA44B00956ECC /* Walltones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Walltones.entitlements; sourceTree = "<group>"; };
 		214510FC20ECA97700956ECC /* webservices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webservices.swift; sourceTree = "<group>"; };
 		214510FE20ECD3B600956ECC /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				21552DF820DB90FE002872B3 /* Reachability.m */,
 				21552DF620DB90FD002872B3 /* Walltones-Bridging-Header.h */,
 				214510FC20ECA97700956ECC /* webservices.swift */,
+				213912DE20F7471F009AF23C /* RoundCornerProgressView.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -625,6 +628,7 @@
 				21FA026620ED01F20057442E /* WallpaperList.swift in Sources */,
 				21FA025F20ECE9F40057442E /* WallpaperListCell.swift in Sources */,
 				214DC37F20F47B81003711EC /* FavouriteListVC.swift in Sources */,
+				213912DF20F7471F009AF23C /* RoundCornerProgressView.swift in Sources */,
 				2145110820ECD9FB00956ECC /* WallpaperListVC.swift in Sources */,
 				214510FD20ECA97700956ECC /* webservices.swift in Sources */,
 				21A0323320F384320007D60F /* HelpVC.swift in Sources */,
