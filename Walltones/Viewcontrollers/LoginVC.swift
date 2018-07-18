@@ -9,28 +9,42 @@
 
 import UIKit
 import Alamofire
+import FBSDKLoginKit
+import FBSDKCoreKit
+import GoogleSignIn
 
-class LoginVC: UIViewController ,UITextFieldDelegate{
+class LoginVC: UIViewController ,UITextFieldDelegate,GIDSignInUIDelegate,GIDSignInDelegate {
 
     @IBOutlet weak var txtemail: UITextField!
     
     @IBOutlet weak var txtpwd: UITextField!
     
     @IBOutlet weak var btnlogin: UIButton!
-    
-    
+    var type = 2
+    var useremail : String = ""
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         txtpwd.delegate = self
         setLeftView(textfield: txtemail)
         setLeftView1(textfield: txtpwd)
 
-        bottomborder(textfield: txtemail)
-        bottomborder(textfield: txtpwd)
+     //   bottomborder(textfield: txtemail)
+    //    bottomborder(textfield: txtpwd)
         btnlogin.layer.cornerRadius = 25.0
         
         btnlogin.clipsToBounds = true
+        
+        GIDSignIn.sharedInstance().uiDelegate = self
+        GIDSignIn.sharedInstance().delegate = self
+        
         // Do any additional setup after loading the view.
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        
+       
         
     }
 
@@ -109,10 +123,11 @@ class LoginVC: UIViewController ,UITextFieldDelegate{
     
     
     @IBAction func btnloginaction(_ sender: Any) {
-        
+  
+ 
         if(txtemail.text == "")
         {
-            let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Please enter emailaddress")
+            let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Please enter email address")
             self.present(alert, animated: true, completion: nil)
             
         }
@@ -140,6 +155,7 @@ class LoginVC: UIViewController ,UITextFieldDelegate{
         {
         apilogincall()
         }
+    
     }
     
     
@@ -157,7 +173,8 @@ class LoginVC: UIViewController ,UITextFieldDelegate{
         let parameters: Parameters = [
             "email":txtemail.text!,
             "password":txtpwd.text!,
-            "device_id": UserDefaults.standard.value(forKey:"device_token") as! String
+            "device_id": UserDefaults.standard.value(forKey:"device_token") as! String,
+            "reg_type":self.type
         ]
         
         Alamofire.request(webservices().baseurl + "login", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil).responseJSONDecodable{(response:DataResponse<LoginResponse>) in
@@ -169,24 +186,34 @@ class LoginVC: UIViewController ,UITextFieldDelegate{
               if(resp.errorCode == 0)
               {
                 
-                UserDefaults.standard.set(resp.data.profilePic, forKey:"profilepic")
-                UserDefaults.standard.set(resp.data.username, forKey:"username")
+                UserDefaults.standard.set(resp.data?.profilePic, forKey:"profilepic")
+                UserDefaults.standard.set(resp.data?.username, forKey:"username")
 
-                UserDefaults.standard.set(resp.data.userID, forKey:"userid")
+                UserDefaults.standard.set(resp.data?.userID, forKey:"userid")
                 
                 UserDefaults.standard.set(self.txtemail.text, forKey: "email")
                 UserDefaults.standard.set(self.txtpwd.text, forKey: "password")
+                UserDefaults.standard.set(self.type, forKey: "type")
 
                 UserDefaults.standard.set(1, forKey:"is_login")
                 
                 UserDefaults.standard.synchronize()
+              
+                
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                 
                 let nextViewController = storyBoard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
                 self.navigationController?.pushViewController(nextViewController, animated: true)
                 
                 }
+                else
                 
+              {
+                let alert = webservices.sharedInstance.AlertBuilder(title: "", message: resp.message)
+                self.present(alert, animated: true, completion: nil)
+                
+                
+                }
                 
             case .failure(let err):
              print(err.localizedDescription)
@@ -203,6 +230,170 @@ class LoginVC: UIViewController ,UITextFieldDelegate{
     }
     
     }
+    func apilogincallnew()
+    {
+        if AppDelegate.hasConnectivity() == true
+        {
+            StartSpinner()
+            
+            let parameters: Parameters = [
+                "email":useremail,
+                "device_id": UserDefaults.standard.value(forKey:"device_token") as! String,
+                "reg_type":self.type
+            ]
+            
+            Alamofire.request(webservices().baseurl + "login", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil).responseJSONDecodable{(response:DataResponse<LoginResponse>) in
+                switch response.result{
+                    
+                case .success(let resp):
+                    print(resp)
+                    StopSpinner()
+                    if(resp.errorCode == 0)
+                    {
+                        
+                        UserDefaults.standard.set(resp.data?.profilePic, forKey:"profilepic")
+                        UserDefaults.standard.set(resp.data?.username, forKey:"username")
+                        
+                        UserDefaults.standard.set(resp.data?.userID, forKey:"userid")
+                        
+                        UserDefaults.standard.set(self.txtemail.text, forKey: "email")
+                        UserDefaults.standard.set(self.txtpwd.text, forKey: "password")
+                        UserDefaults.standard.set(self.type, forKey: "type")
+
+                        UserDefaults.standard.set(1, forKey:"is_login")
+                        
+                    
+                        
+                        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                        
+                        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
+                        self.navigationController?.pushViewController(nextViewController, animated: true)
+                        
+                        UserDefaults.standard.synchronize()
+                     
+                        
+                    }
+                    else
+                    {
+                        let alert = webservices.sharedInstance.AlertBuilder(title: "", message: resp.message)
+                        self.present(alert, animated: true, completion: nil)
+                        
+                    }
+                    
+                    
+                case .failure(let err):
+                    print(err.localizedDescription)
+                    StopSpinner()
+                }
+            }
+            
+        }
+        else
+        {
+            
+            webservices.sharedInstance.nointernetconnection()
+            NSLog("No Internet Connection")
+        }
+        
+    }
+    
+    
+    @IBAction func homeaction(_ sender: Any) {
+        
+       self.navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction func facebookaction(_ sender: Any) {
+        let fbLoginManager : FBSDKLoginManager = FBSDKLoginManager()
+        fbLoginManager.loginBehavior = FBSDKLoginBehavior.web
+        fbLoginManager.logOut()
+        fbLoginManager.logIn(withReadPermissions: ["email","user_photos"], from: self) { (result, error) in
+            if (error == nil){
+                if (result?.isCancelled)!{
+                    return
+                }
+                let fbloginresult : FBSDKLoginManagerLoginResult = result!
+                if fbloginresult.grantedPermissions != nil {
+                    
+                    
+                    self.getFBUserData()
+                    
+                }
+            }
+        }
+        
+    }
+   
+    //MARK:- Get user data from facebook
+    func getFBUserData(){
+        if((FBSDKAccessToken.current()) != nil){
+            FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, picture.type(large), email, gender, friendlists, friends"]).start(completionHandler: { (connection, result, error) -> Void in
+                if (error == nil){
+                    
+                     self.type = 0
+                    var  dict = result as! [String : AnyObject]
+                    var name  = dict["name"]
+                    var email  = dict["email"]
+                    self.useremail = email as! String
+                    self.apilogincallnew()
+                    if let imageURL = ((dict["picture"] as? [String: Any])?["data"] as? [String: Any])?["url"] as? String {
+                   
+                    }
+                }
+            })
+        }
+    }
+    
+    //MARK:- Gmail delegate methods
+    
+   
+    // Present a view that prompts the user to sign in with Google
+    func sign(_ signIn: GIDSignIn!, present viewController: UIViewController!) {
+        present(viewController, animated: true, completion: nil)
+    }
+    
+    // Dismiss the "Sign in with Google" view
+    func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!) {
+        viewController.dismiss(animated: true, completion: nil)
+    }
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
+              withError error: Error!) {
+        if let error = error {
+            print("\(error.localizedDescription)")
+        } else {
+            
+            self.type = 1
+
+            // Perform any operations on signed in user here.
+            let userId = user.userID                  // For client-side use only!
+            let idToken = user.authentication.idToken // Safe to send to the server
+            let fullName = user.profile.name
+            let givenName = user.profile.givenName
+            let familyName = user.profile.familyName
+            let email = user.profile.email
+            self.useremail = email!
+            self.apilogincallnew()
+            if user.profile.hasImage{
+                // crash here !!!!!!!! cannot get imageUrl here, why?
+                // let imageUrl = user.profile.imageURLWithDimension(120)
+                let imageUrl = signIn.currentUser.profile.imageURL(withDimension: 120)
+                print(" image url: ", imageUrl?.absoluteString)
+                
+                
+            }
+            GIDSignIn.sharedInstance().disconnect()
+
+            // ...
+        }
+    }
+    
+    
+    
+    @IBAction func gmailaction(_ sender: Any) {
+        GIDSignIn.sharedInstance().signIn()
+
+    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

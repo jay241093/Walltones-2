@@ -13,12 +13,20 @@ import  Alamofire
 import PKHUD
 import AVKit
 
+protocol Ringdetail
+{
+    func closeaction()
+    
+}
+
 class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewDataSource , URLSessionDownloadDelegate{
     @IBOutlet weak var lblname: UILabel!
     
     @IBOutlet weak var lblnum: UILabel!
     @IBOutlet weak var btnlike: UIButton!
-
+    var delegate: Ringdetail?
+    var  ringid : String?
+    var catid : Int = 0
     @IBOutlet weak var btnplay: UIButton!
     var downloadTask: URLSessionDownloadTask!
     var backgroundSession: URLSession!
@@ -37,6 +45,15 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
     @IBAction func closeaction(_ sender: Any) {
         removeAnimate()
         self.playerViewController.player?.pause()
+        delegate?.closeaction()
+    }
+    
+    @objc func playerDidFinishPlaying(note: NSNotification){
+        isplaying = 0
+        
+        self.btnplay.setBackgroundImage(#imageLiteral(resourceName: "unnamed"), for: .normal)
+
+        
     }
     
     @IBAction func PlayAction(_ sender: Any) {
@@ -63,6 +80,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
                             self.playerViewController.player = AVPlayer(url: videoURL as! URL) as AVPlayer
                             self.playerViewController.player?.play()
                             self.btnplay.setBackgroundImage(#imageLiteral(resourceName: "pause-circle-solid"), for: .normal)
+                              NotificationCenter.default.addObserver(self, selector:#selector(self.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.playerViewController.player?.currentItem)
                         }
                         isplaying = 1
                         
@@ -114,6 +132,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
                             self.playerViewController.player = AVPlayer(url: videoURL as! URL) as AVPlayer
                             self.playerViewController.player?.play()
                             self.btnplay.setBackgroundImage(#imageLiteral(resourceName: "pause-circle-solid"), for: .normal)
+                               NotificationCenter.default.addObserver(self, selector:#selector(self.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.playerViewController.player?.currentItem)
                         }
                         isplaying = 1
                         
@@ -324,7 +343,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         
         if(ringtonelist.count != 0)
         {
-            let dic =  self.ringtonelist[self.index1].icon
+            let dic =  self.ringtonelist[self.index1].file
             
             let url = "http://innoviussoftware.com/walltones/storage/app/" + dic
             
@@ -336,7 +355,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         }
         else
         {
-            let dic =  self.allringtone[self.index1].icon
+            let dic =  self.allringtone[self.index1].file
             
             let url = "http://innoviussoftware.com/walltones/storage/app/" + dic
             
@@ -367,22 +386,61 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
                     switch response.result{
                     case .success(let resp):
                         print(resp)
-                        
+                        self.ringid = self.ringtonelist[self.index1].id
+                        self.Getlist(id: self.catid)
                         let dic =  self.ringtonelist[self.index1].file
                         var imageview = UIImageView()
                         
                         
                         let url1 = "http://innoviussoftware.com/walltones/storage/app/" + dic
                         let url = URL(string: url1)!
-                        self.downloadTask = self.backgroundSession.downloadTask(with: url)
-                        self.downloadTask.resume()
-                        
+                     
                         StopSpinner()
-                        self.progressDownloadIndicator.isHidden = false
+                        
+                        if let audioUrl =  NSURL(string: url1) {
+                            
+                            // then lets create your document folder url
+                            let documentsDirectoryURL =  FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+                            
+                            // lets create your destination file url
+                            let destinationUrl = documentsDirectoryURL.appendingPathComponent(audioUrl.lastPathComponent ?? "audio.mp3")
+                            
+                            print(destinationUrl)
+                            
+                            // to check if it exists before downloading it
+                            if FileManager().fileExists(atPath: destinationUrl.path) {
+                                print("The file already exists at path")
+                                let alert =  webservices.sharedInstance.AlertBuilder(title:"", message: "The file already exists at path")
+                                self.present(alert, animated: true, completion: nil)
+
+                                // if the file doesn't exist
+                            } else {
+                                self.downloadTask = self.backgroundSession.downloadTask(with: url)
+                                self.downloadTask.resume()
+                                
+                                // you can use NSURLSession.sharedSession to download the data asynchronously
+                                URLSession.shared.downloadTask(with: audioUrl as URL, completionHandler: { (location, response, error) -> Void in
+                                    guard let location = location, error == nil else { return }
+                                    do {
+                                        // after downloading your file you need to move it to your destination url
+                                        try FileManager().moveItem(at: location, to: destinationUrl)
+                                        print("File moved to documents folder")
+                                    } catch let error as NSError {
+                                        print(error.localizedDescription)
+                                    }
+                                }).resume()
+                            }
+                        
+                        
+                        }
+                        
+                        
+                        
+                       // self.progressDownloadIndicator.isHidden = false
                     case .failure(let err):
                         print(err)
                         print("Failed to change ")
-                        let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to Change Driver Status \n Try Again")
+                        let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to download \n Try Again")
                         self.present(alert, animated: true, completion: nil)
                         StopSpinner()
                         
@@ -416,24 +474,54 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
                     switch response.result{
                     case .success(let resp):
                         print(resp)
-                        
+                        self.ringid = self.allringtone[self.index1].id
+                        self.getallringtonelist()
                         let dic =  self.allringtone[self.index1].file
                         var imageview = UIImageView()
-                        
-                        
                         let url1 = "http://innoviussoftware.com/walltones/storage/app/" + dic
                         
                         let url = URL(string: url1)!
-                        self.downloadTask = self.backgroundSession.downloadTask(with: url)
-                        self.downloadTask.resume()
-                        self.progressDownloadIndicator.isHidden = false
-                        
+                      
+                       // self.progressDownloadIndicator.isHidden = false
+                        if let audioUrl =  NSURL(string: url1) {
+                            
+                            // then lets create your document folder url
+                            let documentsDirectoryURL =  FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+                            
+                            // lets create your destination file url
+                            let destinationUrl = documentsDirectoryURL.appendingPathComponent(audioUrl.lastPathComponent ?? "audio.mp3")
+                            print(destinationUrl)
+                            
+                            // to check if it exists before downloading it
+                            if FileManager().fileExists(atPath: destinationUrl.path) {
+                                print("The file already exists at path")
+                              let alert =  webservices.sharedInstance.AlertBuilder(title:"", message: "The file already exists at path")
+                                self.present(alert, animated: true, completion: nil)
+                                // if the file doesn't exist
+                            } else {
+                                self.downloadTask = self.backgroundSession.downloadTask(with: url)
+                                self.downloadTask.resume()
+                                // you can use NSURLSession.sharedSession to download the data asynchronously
+                                URLSession.shared.downloadTask(with: audioUrl as URL, completionHandler: { (location, response, error) -> Void in
+                                    guard let location = location, error == nil else { return }
+                                    do {
+                                        // after downloading your file you need to move it to your destination url
+                                        try FileManager().moveItem(at: location, to: destinationUrl)
+                                        print("File moved to documents folder")
+                                    } catch let error as NSError {
+                                        print(error.localizedDescription)
+                                    }
+                                }).resume()
+                            }
+                            
+                            
+                        }
                         
                         StopSpinner()
                     case .failure(let err):
                         print(err)
                         print("Failed to change ")
-                        let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to Change Driver Status \n Try Again")
+                        let alert = webservices.sharedInstance.AlertBuilder(title:  "OOps", message: "Unable to download \n Try Again")
                         self.present(alert, animated: true, completion: nil)
                         StopSpinner()
                         
@@ -464,41 +552,44 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
                     totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64)
     {
         
-        progressDownloadIndicator.setProgress(Float(totalBytesWritten)/Float(totalBytesExpectedToWrite), animated: true)
+     //   progressDownloadIndicator.setProgress(Float(totalBytesWritten)/Float(totalBytesExpectedToWrite), animated: true)
+        var str = String(Float(totalBytesWritten)/Float(totalBytesExpectedToWrite)*100)
+        
+        HUD.flash(.label(str + "% completed"), delay:100.0) { _ in
+            print("License Obtained.")
+        }
+        
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+      
         if(error != nil)
         {
             
-        }
-        else
-        {
+           // progressDownloadIndicator.isHidden = true
             
-            
+            StartLabeledSpinner(type: .error, title:"Failur", message:(error?.localizedDescription)!, hide:100.0)
+
+
         }
         
-        
+   
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL)
     {
         if self.downloadTask != nil {
-            
-            progressDownloadIndicator.isHidden = true
-            progressDownloadIndicator.setProgress(0.0, animated: true)
-            let alert =   webservices.sharedInstance.AlertBuilder(title:"", message: "Download successfully")
-            
-            self.present(alert, animated: true, completion: nil)
-            
-            
-        }
+            StartLabeledSpinner(type:.success, title:"Success", message:"Downloaded successfully", hide:4.0)
+
+         }
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
          GetFavRingtones()
+        pagerview.isInfinite = false
+
         progressDownloadIndicator.layer.cornerRadius = 8
         progressDownloadIndicator.clipsToBounds = true
         progressDownloadIndicator.transform = progressDownloadIndicator.transform.scaledBy(x: 1, y: 5)
@@ -648,7 +739,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
             if(targetIndex >= 0)
             {
                  btnlike.tag = targetIndex
-                lblname.text = "Name :" + ringtonelist[targetIndex].name + " \n" +  "categoryName :" + ringtonelist[targetIndex].categoryName
+                lblname.text = "Name : " + ringtonelist[targetIndex].name + " \n" +  "Category name : " + ringtonelist[targetIndex].categoryName
                 if ringtonelist[targetIndex].downloadCount != nil
                 {
                     lblnum.text = " " + ringtonelist[targetIndex].downloadCount!
@@ -672,7 +763,7 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
             {
                 
                  btnlike.tag = targetIndex
-                lblname.text = "Name :" + allringtone[targetIndex].name + " \n" +  "categoryName :" + allringtone[targetIndex].categoryName
+                lblname.text = "Name : " + allringtone[targetIndex].name + " \n" +  "Category name : " + allringtone[targetIndex].categoryName
                 if allringtone[targetIndex].downloadCount != nil
                 {
                     lblnum.text = " " + allringtone[targetIndex].downloadCount!
@@ -762,6 +853,105 @@ class RingtoneDetailVC: UIViewController , FSPagerViewDelegate , FSPagerViewData
         
         
     }
+    
+    
+    func  Getlist(id:Int)
+    {
+        
+        if AppDelegate.hasConnectivity() == true
+        {
+            StartSpinner()
+            
+            Alamofire.request(webservices().baseurl + "getcatringtone", method: .post, parameters: ["category_id":id], encoding: JSONEncoding.default, headers: nil).responseJSONDecodable{(response:DataResponse<Ringtionelist>) in
+                switch response.result{
+                    
+                case .success(let resp):
+                    print(resp)
+                    StopSpinner()
+                    if(resp.errorCode == 0)
+                    {
+                        self.ringtonelist = resp.data
+                        for data in resp.data{
+                            
+                            if(self.ringid == data.id)
+                            {
+                                self.lblnum.text = data.downloadCount
+                            }
+                            
+                        }
+                 
+                    }
+                    
+                case .failure(let err): break
+                let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load ringtone list")
+                self.present(alert, animated: true, completion: nil)
+                print(err)
+                StopSpinner()
+                }
+            }
+            
+        }
+        else
+        {
+            
+            webservices.sharedInstance.nointernetconnection()
+            NSLog("No Internet Connection")
+        }
+        
+        
+        
+        
+    }
+    func  getallringtonelist()
+    {
+        
+        if AppDelegate.hasConnectivity() == true
+        {
+            StartSpinner()
+            
+            Alamofire.request(webservices().baseurl + "getringtone", method: .post, parameters: [:], encoding: JSONEncoding.default, headers: nil).responseJSONDecodable{(response:DataResponse<Allringtonelist>) in
+                switch response.result{
+                    
+                case .success(let resp):
+                    print(resp)
+                    StopSpinner()
+                    if(resp.errorCode == 0)
+                    {
+                        self.allringtone = resp.data
+                        for data in resp.data{
+                            
+                            if(self.ringid == data.id)
+                            {
+                                self.lblnum.text = data.downloadCount
+                            }
+                            
+                        }
+                      
+                    }
+                    
+                case .failure(let err): break
+                let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load ringne category")
+                self.present(alert, animated: true, completion: nil)
+                print(err)
+                StopSpinner()
+                }
+            }
+            
+        }
+        else
+        {
+            
+            webservices.sharedInstance.nointernetconnection()
+            NSLog("No Internet Connection")
+        }
+        
+        
+        
+        
+    }
+    
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

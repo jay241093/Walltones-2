@@ -6,15 +6,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Walltones/Viewcontrollers/SignUpVC.swift"
-            timestampString = "553168988.5456049"
+            timestampString = "553608476.981233"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
             landmarkName = "BtnregisterAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -25,29 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Walltones/Viewcontrollers/SignUpVC.swift"
-            timestampString = "553168988.545674"
+            filePath = "Walltones/Viewcontrollers/ViewController.swift"
+            timestampString = "553608476.9814039"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
-            landmarkName = "BtnregisterAction(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/Viewcontrollers/SignUpVC.swift"
-            timestampString = "553168988.545728"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "BtnregisterAction(_:)"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
+            landmarkName = "getFBUserData()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -58,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Walltones/PopUps/RingtoneDetailVC.swift"
-            timestampString = "553168988.545781"
+            timestampString = "553608476.9815"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "477"
-            endingLineNumber = "477"
-            landmarkName = "urlSession(_:task:didCompleteWithError:)"
+            startingLineNumber = "408"
+            endingLineNumber = "408"
+            landmarkName = "downloadaction(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -73,13 +57,61 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Walltones/PopUps/RingtoneDetailVC.swift"
-            timestampString = "553168988.54584"
+            filePath = "Walltones/Sidemenu Controllers/DownloadVC.swift"
+            timestampString = "553608476.981576"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "474"
-            endingLineNumber = "474"
-            landmarkName = "urlSession(_:task:didCompleteWithError:)"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "DownloadedWallpaper()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Alamofire.DataResponse&lt;Walltones.Downloadedwallpaper&gt;) -&gt; () in Walltones.DownloadVC.DownloadedWallpaper() -&gt; ()"
+                  moduleName = "Walltones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ravidubey/Desktop/Walltones%202/Walltones/Sidemenu%20Controllers/DownloadVC.swift"
+                  timestampString = "553602531.5016429"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "696">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Walltones.DownWallpaper) -&gt; Swift.Optional&lt;Walltones.DownWallpaper&gt; in closure #1 (Alamofire.DataResponse&lt;Walltones.Downloadedwallpaper&gt;) -&gt; () in Walltones.DownloadVC.DownloadedWallpaper() -&gt; ()"
+                  moduleName = "Walltones"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ravidubey/Desktop/Walltones%202/Walltones/Sidemenu%20Controllers/DownloadVC.swift"
+                  timestampString = "553602531.505327"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
+                  offsetFromSymbolStart = "876">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Walltones/Sidemenu Controllers/DownloadVC.swift"
+            timestampString = "553608476.981649"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
+            landmarkName = "DownloadedWallpaper()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -89,125 +121,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Walltones/PopUps/RingtoneDetailVC.swift"
-            timestampString = "553168988.545895"
+            filePath = "Walltones/Sidemenu Controllers/DownloadVC.swift"
+            timestampString = "553608476.981743"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "472"
-            endingLineNumber = "472"
-            landmarkName = "urlSession(_:task:didCompleteWithError:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/PopUps/RingtoneDetailVC.swift"
-            timestampString = "553168988.545947"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "475"
-            endingLineNumber = "475"
-            landmarkName = "urlSession(_:task:didCompleteWithError:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/Sidemenu Controllers/WallpaperListVC.swift"
-            timestampString = "553168988.546002"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
-            landmarkName = "searchBar(_:textDidChange:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/Sidemenu Controllers/WallpaperListVC.swift"
-            timestampString = "553168988.546055"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
-            landmarkName = "searchBar(_:textDidChange:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/Sidemenu Controllers/FavouriteListVC.swift"
-            timestampString = "553168988.546111"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "374"
-            endingLineNumber = "374"
-            landmarkName = "RemoveFavouriteRingtone(id:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/PopUps/RingtoneDetailVC.swift"
-            timestampString = "553168988.546159"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
-            landmarkName = "likeaction(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/PopUps/RingtoneDetailVC.swift"
-            timestampString = "553168988.546207"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
-            landmarkName = "likeaction(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Walltones/Sidemenu Controllers/RingtoneListVC.swift"
-            timestampString = "553168988.5462559"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "410"
-            endingLineNumber = "410"
-            landmarkName = "AddtoFavourite(sender:)"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "DownloadedWallpaper()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -9,7 +9,7 @@
 import Foundation
 
  struct LoginResponse: Codable {
-    let data: DataClass
+    let data: DataClass?
     let errorCode: Int
     let message: String
     
@@ -22,7 +22,7 @@ import Foundation
 
  struct DataClass: Codable {
     let userID: Int
-    let email, profilePic, username: String
+    let email, profilePic, username: String?
     
     enum CodingKeys: String, CodingKey {
         case userID = "user_id"

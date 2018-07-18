@@ -43,9 +43,6 @@ class SignUpVC: UIViewController ,UIImagePickerControllerDelegate,UINavigationCo
         
         imgview.addGestureRecognizer(tapGesture)
         imgview.isUserInteractionEnabled = true
-        
-        
-        
         imgview.layer.borderWidth=1.0
         imgview.layer.masksToBounds = false
         imgview.layer.borderColor = UIColor.white.cgColor
@@ -64,13 +61,13 @@ class SignUpVC: UIViewController ,UIImagePickerControllerDelegate,UINavigationCo
        
         txtusername.text = username
         txtemail.text = email
-        
-        bottomborder(textfield: txtusername)
-        bottomborder(textfield: txtrepeatpass)
-        
-        bottomborder(textfield: txtpass)
-        
-        bottomborder(textfield: txtemail)
+//
+//        bottomborder(textfield: txtusername)
+//        bottomborder(textfield: txtrepeatpass)
+//
+//        bottomborder(textfield: txtpass)
+//
+//        bottomborder(textfield: txtemail)
         
         btnregister.layer.cornerRadius = 25.0
         
@@ -182,7 +179,6 @@ class SignUpVC: UIViewController ,UIImagePickerControllerDelegate,UINavigationCo
             switch result {
             case .success(let upload, _, _):
                 
-                
                 upload.responseJSON { response in
                     print(response.result.value!)
                     
@@ -190,11 +186,21 @@ class SignUpVC: UIViewController ,UIImagePickerControllerDelegate,UINavigationCo
                     
                 if(dic.value(forKey:"error_code") as! Int == 0)
                 {
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let newdic =  dic.value(forKey:"data") as! NSDictionary
                     
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
+                    UserDefaults.standard.set(newdic.value(forKey: "profile_pic") as! String, forKey:"profilepic")
+                    UserDefaults.standard.set(newdic.value(forKey: "username") as! String, forKey:"username")
+                    UserDefaults.standard.set(newdic.value(forKey: "id") as! Int, forKey:"userid")
+                    UserDefaults.standard.set(newdic.value(forKey: "email") as! String, forKey: "email")
+                    UserDefaults.standard.set(self.txtpass.text!, forKey: "password")
+                    UserDefaults.standard.set(self.type, forKey: "type")
+                    UserDefaults.standard.set(1, forKey:"is_login")
+                    UserDefaults.standard.synchronize()
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "SWRevealViewController") as! SWRevealViewController
                     self.navigationController?.pushViewController(nextViewController, animated: true)
-                }
+                 }
                     else
                     
                 {

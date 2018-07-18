@@ -20,7 +20,9 @@ func setShadow(view: UIView)
 }
 
 
-class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionViewDataSource , UITableViewDataSource , UITableViewDelegate , UISearchBarDelegate, ScrollPagerDelegate{
+class RingtoneListVC: UIViewController,UICollectionViewDelegate , UICollectionViewDataSource , UITableViewDataSource , UITableViewDelegate , UISearchBarDelegate, ScrollPagerDelegate, Ringdetail , AVPlayerViewControllerDelegate{
+    
+    
    
  var playerViewController = AVPlayerViewController()
     @IBOutlet weak var pager: ScrollPager!
@@ -39,13 +41,13 @@ var favidary = NSMutableArray()
 
     var AllRingtonelist = [allringlist]()
     var newAllRingtonelist = [allringlist]()
-
+    var Catid = 0
     var ringtonelist = UITableView()
     var isplaying = 0
     var issearch = 0
     var  searchbar = UISearchBar()
     var playbackSlider:UISlider?
-var iscategory = true
+    var iscategory = true
     @IBOutlet weak var btnsearch: UIButton!
     
     @IBAction func searchaction(_ sender: Any) {
@@ -54,7 +56,7 @@ var iscategory = true
         {
             issearch = 1
             // searchbar.isHidden = false
-            searchbar.placeholder = "searchbartext"
+            searchbar.placeholder = "search..."
             searchbar.delegate = self
             searchbar.searchBarStyle = .minimal
             self.navigationItem.titleView = searchbar
@@ -111,7 +113,7 @@ var iscategory = true
                 AllRingtonelist.removeAll()
                 for dic in newAllRingtonelist
                 {
-                    if(dic.name.lowercased().contains(searchText.lowercased()))
+                    if(dic.name.lowercased().contains(searchText.lowercased()) || dic.categoryName.lowercased().contains(searchText.lowercased()))
                     {
                         AllRingtonelist.append(dic)
                     }
@@ -164,7 +166,10 @@ var iscategory = true
             
         }
     }
-    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        searchBar.resignFirstResponder()
+    }
     
     
     //MARK:- Scrollpager bar delegate methods
@@ -185,7 +190,12 @@ var iscategory = true
         
     }
 
-    
+    func closeaction() {
+        getallringtonelist()
+        GetringtoneCategory()
+        GetFavRingtones()
+        
+    }
     //Mark : delegate and data source methods
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
@@ -214,8 +224,7 @@ var iscategory = true
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let dic = Categorylist[indexPath.row]
-
-        
+      Catid = dic.id
         Getlist(id: dic.id)
     }
     
@@ -314,6 +323,7 @@ var iscategory = true
                 cell.btnlike.setImage(#imageLiteral(resourceName: "heart-solid"), for: .normal)
                 StopSpinner()
                 self.GetFavRingtones()
+                
                
                 
                 StopSpinner()
@@ -345,6 +355,7 @@ var iscategory = true
                 cell.btnlike.setImage(#imageLiteral(resourceName: "heart-regular"), for: .normal)
                 StopSpinner()
                 self.GetFavRingtones()
+                
                 
                 
                 StopSpinner()
@@ -446,9 +457,11 @@ var iscategory = true
         popOverConfirmVC.isfromcategory = 1
         popOverConfirmVC.favidary = self.favidary
         popOverConfirmVC.ringtonelist = Ringtonelist
+        popOverConfirmVC.catid = Catid
+        popOverConfirmVC.delegate = self
+
         self.addChildViewController(popOverConfirmVC)
         popOverConfirmVC.index1 =  indexPath.row
-        
         popOverConfirmVC.view.frame = self.view.frame
         self.view.center = popOverConfirmVC.view.center
         self.view.addSubview(popOverConfirmVC.view)
@@ -465,6 +478,7 @@ var iscategory = true
         let popOverConfirmVC = self.storyboard?.instantiateViewController(withIdentifier: "RingtoneDetailVC") as! RingtoneDetailVC
         popOverConfirmVC.isfromcategory = 1
         popOverConfirmVC.favidary = self.favidary
+        popOverConfirmVC.delegate = self
         popOverConfirmVC.allringtone = AllRingtonelist
         popOverConfirmVC.index1 =  indexPath.row
         self.addChildViewController(popOverConfirmVC)
@@ -480,7 +494,26 @@ var iscategory = true
         
     }
     
+  
     
+    @objc func playerDidFinishPlaying(note: NSNotification){
+        print("Video Finished")
+        isplaying = 0
+
+        for cell in self.tblview.visibleCells  as! [RIngtonelistCell]    {
+            let indexPath = self.ringtonelist.indexPath(for: cell as RIngtonelistCell)
+            cell.btnplay.setImage(#imageLiteral(resourceName: "unnamed"), for:.normal)
+        }
+    }
+     @objc func playerDidFinishPlaying1(note: NSNotification){
+        isplaying = 0
+        
+        for cell in self.ringtonelist.visibleCells  as! [TotalringtonelistCell]    {
+            
+            cell.btnplay.setImage(#imageLiteral(resourceName: "unnamed"), for: .normal)
+        }
+    
+    }
     //Mark : Userdefine Function
 
     @objc func playaudiomethod(sender:UIButton)
@@ -504,15 +537,24 @@ var iscategory = true
             
             let videoURL = url
             playerViewController = AVPlayerViewController()
-            
+            playerViewController.delegate = self
             DispatchQueue.main.async() {
+                
+                
+                for cell in self.tblview.visibleCells  as! [RIngtonelistCell]    {
+                    let indexPath = self.ringtonelist.indexPath(for: cell as RIngtonelistCell)
+                    cell.btnplay.setImage(#imageLiteral(resourceName: "unnamed"), for:.normal)
+                 }
+                
+              
                 self.playerViewController.player = AVPlayer(url: videoURL as! URL) as AVPlayer
                 self.playerViewController.player?.play()
                 cell.btnplay.setImage(#imageLiteral(resourceName: "pause-circle-solid"), for: .normal)
                 let playerItem:AVPlayerItem = AVPlayerItem(url: videoURL! as URL)
                 var player = AVPlayer(playerItem: playerItem)
               
-                
+                NotificationCenter.default.addObserver(self, selector:#selector(self.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.playerViewController.player?.currentItem)
+
                 //playbackSlider!.addTarget(self, action: "playbackSliderValueChanged:", for: .valueChanged)
                 
                 
@@ -569,12 +611,19 @@ var iscategory = true
                 
                 let videoURL = url
                 playerViewController = AVPlayerViewController()
-                
+                playerViewController.delegate = self
+         
                 DispatchQueue.main.async() {
                     self.playerViewController.player = AVPlayer(url: videoURL as! URL) as AVPlayer
                     self.playerViewController.player?.play()
+                    
+                    for cell in self.ringtonelist.visibleCells  as! [TotalringtonelistCell]    {
+                     
+                            cell.btnplay.setImage(#imageLiteral(resourceName: "unnamed"), for: .normal)
+                     }
                     cell.btnplay.setImage(#imageLiteral(resourceName: "pause-circle-solid"), for: .normal)
-                }
+                   }
+                  NotificationCenter.default.addObserver(self, selector:#selector(self.playerDidFinishPlaying1(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.playerViewController.player?.currentItem)
                 isplaying = 1
                 
             } catch let error as NSError {
@@ -606,6 +655,7 @@ var iscategory = true
         
         
     }
+    
     
 func  GetringtoneCategory()
 {
@@ -707,8 +757,8 @@ func  GetringtoneCategory()
                     StopSpinner()
                     if(resp.errorCode == 0)
                     {
-                    
-                        self.newAllRingtonelist = resp.data
+                        
+                      self.newAllRingtonelist = resp.data
                         self.AllRingtonelist = resp.data
                         self.ringtonelist.reloadData()
                     }
@@ -758,7 +808,8 @@ func  GetringtoneCategory()
                             
                         }
             
-                        
+                        self.tblview.reloadData()
+                        self.ringtonelist.reloadData()
                     }
                     
                 case .failure(let err): break

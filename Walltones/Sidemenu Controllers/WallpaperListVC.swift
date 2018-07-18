@@ -11,12 +11,16 @@ import ScrollPager
 import Alamofire
 import SDWebImage
 
+import GoogleMobileAds
 
-
-class WallpaperListVC: UIViewController , UICollectionViewDelegate , UICollectionViewDataSource ,UICollectionViewDelegateFlowLayout , UITableViewDelegate , UITableViewDataSource,UISearchBarDelegate,ScrollPagerDelegate{
+class WallpaperListVC: UIViewController , UICollectionViewDelegate , UICollectionViewDataSource ,UICollectionViewDelegateFlowLayout , UITableViewDelegate , UITableViewDataSource,UISearchBarDelegate,ScrollPagerDelegate,GADInterstitialDelegate,GADBannerViewDelegate,walldetail{
+   
+    
     @IBOutlet weak var pager: ScrollPager!
     @IBOutlet weak var btn: UIButton!
     @IBOutlet var viewwallpaper: UIView!
+    var interstitial: GADInterstitial!
+    @IBOutlet weak var bannerView: GADBannerView!
     
     @IBOutlet weak var collectioncategory: UICollectionView!
     
@@ -33,6 +37,7 @@ class WallpaperListVC: UIViewController , UICollectionViewDelegate , UICollectio
     var issearch = 0
     var searchbar = UISearchBar()
     var iscategory =  true
+    var Catid = 0
     @IBOutlet weak var btnsearch: UIButton!
     
     @IBAction func serach(_ sender: Any) {
@@ -74,7 +79,7 @@ class WallpaperListVC: UIViewController , UICollectionViewDelegate , UICollectio
                     Allwallpaperlist.removeAll()
                     for dic in newAllwallpaperlist
                     {
-                        if(dic.name.lowercased().contains(searchText.lowercased()))
+                        if(dic.name.lowercased().contains(searchText.lowercased()) || dic.categoryName.lowercased().contains(searchText.lowercased()))
                         {
                             Allwallpaperlist.append(dic)
                         }
@@ -127,7 +132,10 @@ func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         
     }
 }
-
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        searchBar.resignFirstResponder()
+    }
 
 
 //MARK:- Scrollpager bar delegate methods
@@ -150,12 +158,24 @@ collectionAlllist.reloadData()
 
 override func viewDidLoad() {
     super.viewDidLoad()
+    GetFavWallpaper()
+    getwallpapercat()
+    getallwallpapers()
+    interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+    interstitial.delegate = self
+    let request = GADRequest()
+    interstitial.load(request)
+   
+     bannerView.delegate = self
+    bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+    let request1 = GADRequest()
+    bannerView.load(request1)
+    bannerView.rootViewController = self
+    
     collectionAlllist.delegate = self
     collectionAlllist.dataSource = self
     searchbar.delegate = self
-   GetFavWallpaper()
-    getwallpapercat()
-    getallwallpapers()
+ 
     collectionlist.register(UINib(nibName: "WallpaperListCell", bundle: nil), forCellWithReuseIdentifier: "cell")
     collectionAlllist.register(UINib(nibName: "AllwallpaperListCell", bundle: nil), forCellReuseIdentifier:"cell")
     
@@ -174,7 +194,17 @@ override func viewDidLoad() {
     }
     // Do any additional setup after loading the view.
 }
+    override func viewWillAppear(_ animated: Bool) {
+       
+    }
+    
 
+    func closeaction() {
+        GetFavWallpaper()
+        getwallpapercat()
+        getallwallpapers()
+    }
+    
 //MARK:- Collection view delegate & data source methods
 func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     
@@ -247,7 +277,7 @@ func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPat
     if(collectionView == collectioncategory)
     {
         let dic = categoryary[indexPath.row]
-        
+        Catid = dic.id
         categorywallpaper(id: dic.id)
     }
     else
@@ -255,10 +285,12 @@ func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPat
         
         let popOverConfirmVC = self.storyboard?.instantiateViewController(withIdentifier: "WallpaperDetilVC") as! WallpaperDetilVC
         popOverConfirmVC.wallpaperlistnew = Wallpaperlist
+        
         popOverConfirmVC.isfromcategory = 1
         popOverConfirmVC.index1 = indexPath.row
         popOverConfirmVC.favidary = self.favidary
-
+        popOverConfirmVC.catid = Catid
+        popOverConfirmVC.delegate = self
         self.addChildViewController(popOverConfirmVC)
         popOverConfirmVC.view.frame = self.view.frame
         self.view.center = popOverConfirmVC.view.center
@@ -285,10 +317,10 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
     let url = "http://innoviussoftware.com/walltones/storage/app/" + dic.icon
     var newurl = NSURL(string: url)
     dvc.imgview.sd_setImage(with: newurl! as URL, placeholderImage: #imageLiteral(resourceName: "Default-wallpaper"))
-    dvc.lbldes.text = dic.description
-    dvc.lblname.text = dic.name + " ," + dic.categoryName
-    dvc.lbldes.sizeToFit()
+    dvc.lbldes.text =  dic.categoryName
+    dvc.lblname.text =  dic.name
     dvc.view.layer.cornerRadius = 8
+    dvc.lblkeyword.text = dic.keywords
    dvc.imgfav.isUserInteractionEnabled = true
     dvc.imgfav.tag = indexPath.row
    
@@ -313,11 +345,9 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
     if(dic.description != nil)
     {
         
-        dvc.height.constant = 24
     }
     else
     {
-        dvc.height.constant = 0
     }
     
     if(dic.downloadCount == nil)
@@ -402,12 +432,12 @@ func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> 
 }
 
 func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-      if #available(iOS 10.0, *) {
+      if #available(iOS 11.0, *) {
     return UITableViewAutomaticDimension
     }
     else
       {
-      return 363
+      return 250
         
     }
 }
@@ -417,6 +447,7 @@ func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     popOverConfirmVC.Allwallpaperlist = Allwallpaperlist
     popOverConfirmVC.index1 = indexPath.row
     popOverConfirmVC.isfromcategory = 1
+    popOverConfirmVC.delegate = self
     popOverConfirmVC.favidary = self.favidary
     self.addChildViewController(popOverConfirmVC)
     popOverConfirmVC.view.frame = self.view.frame
@@ -440,6 +471,8 @@ func getwallpapercat()
                 {
                     self.Wallcategoryary = resp.data
                     self.categoryary = resp.data
+                    let  dic = self.Wallcategoryary[0].id
+                    self.Catid = dic
                     self.collectioncategory.reloadData()
                     if(self.categoryary.count > 0)
                     {
@@ -469,7 +502,6 @@ func getwallpapercat()
 }
 func categorywallpaper(id:Int)
 {
-    
     if AppDelegate.hasConnectivity() == true
     {
         StartSpinner()
@@ -593,8 +625,40 @@ func getallwallpapers()
         
         
     }
+  
     
     
+    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
+        print("interstitialDidReceiveAd")
+        interstitial.present(fromRootViewController: self)
+
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
+        print("interstitial:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
+    
+    /// Tells the delegate that an interstitial will be presented.
+    func interstitialWillPresentScreen(_ ad: GADInterstitial) {
+        print("interstitialWillPresentScreen")
+    }
+    
+    /// Tells the delegate the interstitial is to be animated off the screen.
+    func interstitialWillDismissScreen(_ ad: GADInterstitial) {
+        print("interstitialWillDismissScreen")
+    }
+    
+    /// Tells the delegate the interstitial had been animated off the screen.
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        print("interstitialDidDismissScreen")
+    }
+    
+    /// Tells the delegate that a user click will open another app
+    /// (such as the App Store), backgrounding the current app.
+    func interstitialWillLeaveApplication(_ ad: GADInterstitial) {
+        print("interstitialWillLeaveApplication")
+    }
     
 
 override func didReceiveMemoryWarning() {

@@ -13,6 +13,8 @@ target 'Walltones' do
  pod 'PKHUD'
  pod 'ScrollPager'
  pod 'FSPagerView'
+ pod 'Google-Mobile-Ads-SDK'
+
 
 
 

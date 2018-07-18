@@ -28,12 +28,7 @@ class sidemenuViewController: UIViewController,UITableViewDelegate,UITableViewDa
 
         
         lblname.text = UserDefaults.standard.value(forKey:"username") as? String
-        
-        let url1 = UserDefaults.standard.value(forKey: "profilepic") as? String
-        let url = "http://innoviussoftware.com/walltones/storage/app/" + url1!
-        var newurl = NSURL(string: url)
-        
-        imguser.sd_setImage(with: newurl as! URL, placeholderImage: UIImage(named: "default-user"))
+       
         imguser.layer.borderWidth=1.0
         imguser.layer.masksToBounds = false
         imguser.layer.borderColor = UIColor.white.cgColor
@@ -43,19 +38,21 @@ class sidemenuViewController: UIViewController,UITableViewDelegate,UITableViewDa
         
         if(UIDevice.current.screenType == .iPhoneX)
         {
-            
-            
           heightview.constant = 250
             
         }
         
         
         
-        reuseid = ["cell","cell1","cell2","cell5","cell3","cell4"]
+        reuseid = ["cell","cell1","cell2","cell5","cell6","cell3","cell4"]
     
     }
     override func viewWillAppear(_ animated: Bool) {
-       
+     
+        let url1 = UserDefaults.standard.value(forKey: "profilepic") as? String
+        let url = "http://innoviussoftware.com/walltones/storage/app/" + url1!
+        var newurl = NSURL(string: url)
+        imguser.sd_setImage(with: newurl as! URL, placeholderImage: UIImage(named: "default-user"))
     }
     
     
@@ -77,13 +74,13 @@ class sidemenuViewController: UIViewController,UITableViewDelegate,UITableViewDa
         
         let str = reuseid.object(at: indexPath.row) as! String
         let dvc:UITableViewCell = tableView.dequeueReusableCell(withIdentifier:str, for: indexPath)
-        var nameary = ["Wallpapers","Ringtones","Favourite List","Help","Settings","Logout"]
+        var nameary = ["Wallpapers","Ringtones","Favourite List","Download List","Help","Settings","Logout"]
         
-        var img = ["Wallpaper","Musix","Fav","Help","Setting","Logout"]
+        var img = ["Wallpaper","Musix","Fav","Download-1","Help","Setting","Logout"]
         dvc.textLabel?.text = nameary[indexPath.row]
         
         let newImage = resizeImage(image: UIImage(named: img[indexPath.row] )!, toTheSize: CGSize(width: 30, height: 30))
-if(indexPath.row == 0 || indexPath.row == 4)
+if(indexPath.row == 0 || indexPath.row == 5)
 {
     let newImage = resizeImage(image: UIImage(named: img[indexPath.row] )!, toTheSize: CGSize(width: 35, height: 30))
     dvc.imageView?.image = newImage
@@ -119,7 +116,7 @@ if(indexPath.row == 0 || indexPath.row == 4)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if (indexPath.row == 5)
+        if (indexPath.row == 6)
         {
             
             let refreshAlert = UIAlertController(title: "Logout", message: "Are you sure you want to logout ?", preferredStyle: UIAlertControllerStyle.alert)

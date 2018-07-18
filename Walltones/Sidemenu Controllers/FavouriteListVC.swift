@@ -12,7 +12,7 @@ import ScrollPager
 import Alamofire
 import SDWebImage
 import AVKit
-class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollectionViewDataSource, UITableViewDelegate , UITableViewDataSource, UICollectionViewDelegateFlowLayout{
+class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollectionViewDataSource, UITableViewDelegate , UITableViewDataSource, UICollectionViewDelegateFlowLayout,ScrollPagerDelegate{
     
    var FavWallary = [FavWallList]()
     var FavRingary = [FavRinglist]()
@@ -34,7 +34,6 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
         super.viewDidLoad()
         
         GetFavWallpaper()
-        GetFavRingtones()
         lblname.text = UserDefaults.standard.value(forKey:"username") as? String
         
         let url1 = UserDefaults.standard.value(forKey: "profilepic") as? String
@@ -67,7 +66,7 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
      
         
         CollectionWallpaper.register(UINib(nibName: "WallpaperListCell", bundle: nil), forCellWithReuseIdentifier: "cell")
-        
+        pager.delegate = self
         pager.addSegmentsWithTitlesAndViews(segments: [("Wallpaper",CollectionWallpaper),("Ringtone",ringtonelist)])
         // Do any additional setup after loading the view.
     }
@@ -116,7 +115,18 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
         popOverConfirmVC.didMove(toParentViewController: self)
     }
     
-    
+    func scrollPager(scrollPager: ScrollPager, changedIndex: Int) {
+        if(changedIndex == 0)
+        {
+            GetFavWallpaper()
+       }
+        else
+        {
+            GetFavRingtones()
+
+        }
+        
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return FavRingary.count
@@ -166,7 +176,14 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
             present(refreshAlert, animated: true, completion: nil)
         }
     }
-    
+    @objc func playerDidFinishPlaying(note: NSNotification){
+        print("Video Finished")
+        isplaying = 0
+        for cell in self.ringtonelist.visibleCells  as! [TotalringtonelistCell]    {
+            
+            cell.btnplay.setImage(#imageLiteral(resourceName: "unnamed"), for: .normal)
+        }
+    }
     
     @objc func playaudiomethod(sender:UIButton)
     {
@@ -191,9 +208,17 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
                 playerViewController = AVPlayerViewController()
                 
                 DispatchQueue.main.async() {
+                    for cell in self.ringtonelist.visibleCells  as! [TotalringtonelistCell]    {
+                        
+                        cell.btnplay.setImage(#imageLiteral(resourceName: "unnamed"), for: .normal)
+                    }
+                   
                     self.playerViewController.player = AVPlayer(url: videoURL! as URL) as AVPlayer
                     self.playerViewController.player?.play()
                     cell.btnplay.setImage(#imageLiteral(resourceName: "pause-circle-solid"), for: .normal)
+                    NotificationCenter.default.addObserver(self, selector:#selector(self.playerDidFinishPlaying(note:)),name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.playerViewController.player?.currentItem)
+
+                  
                 }
                 isplaying = 1
                 
@@ -246,6 +271,14 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
                         
                         self.FavWallary = resp.data
                         self.CollectionWallpaper.reloadData()
+                        if(self.FavWallary.count == 0)
+                        {
+                            let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"No favourite wallpaper available")
+                            self.present(alert, animated: true, completion: nil)
+                            
+                        }
+                        
+                        
                     }
                     
                 case .failure(let err):
@@ -288,7 +321,7 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
                         self.ringtonelist.reloadData()
                         if(self.FavRingary.count == 0)
                         {
-                            let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"No favourite rintone avalible")
+                            let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"No favourite ringtones available")
                             self.present(alert, animated: true, completion: nil)
                             
                         }
@@ -296,7 +329,7 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
                     }
                     
                 case .failure(let err):
-                let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load Fovourite rintone list")
+                let alert = webservices.sharedInstance.AlertBuilder(title:"", message:"Could not get load favourite ringtone list")
                 self.present(alert, animated: true, completion: nil)
                 print(err)
                 StopSpinner()
@@ -357,9 +390,7 @@ class FavouriteListVC: UIViewController ,UICollectionViewDelegate , UICollection
                 
                 
             }
-            
-            
-            
+        
         }
         
     }

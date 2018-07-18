@@ -12,7 +12,6 @@ class AllwallpaperListCell: UITableViewCell {
 
     @IBOutlet weak var view: UIView!
     
-    @IBOutlet weak var height: NSLayoutConstraint!
     @IBOutlet weak var imgview: UIImageView!
     
     @IBOutlet weak var lblname: UILabel!
@@ -20,6 +19,8 @@ class AllwallpaperListCell: UITableViewCell {
     
     @IBOutlet weak var lbldowncount: UILabel!
     @IBOutlet weak var imgfav: UIImageView!
+    
+    @IBOutlet weak var lblkeyword: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -39,6 +39,10 @@
 		217251DA20EF8BC500B56B80 /* TotalringtonelistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217251D820EF8BC500B56B80 /* TotalringtonelistCell.swift */; };
 		217251DB20EF8BC500B56B80 /* TotalringtonelistCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 217251D920EF8BC500B56B80 /* TotalringtonelistCell.xib */; };
 		21A0323320F384320007D60F /* HelpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A0323220F384320007D60F /* HelpVC.swift */; };
+		21D8DD1720FC531800D50217 /* DownloadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8DD1620FC531800D50217 /* DownloadVC.swift */; };
+		21D8DD1920FC579500D50217 /* Downloadedringtone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8DD1820FC579500D50217 /* Downloadedringtone.swift */; };
+		21D8DD1B20FC5A2D00D50217 /* Downloadedwallpaper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8DD1A20FC5A2D00D50217 /* Downloadedwallpaper.swift */; };
+		21D8DD1D20FC9FBE00D50217 /* SetRingtoneVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8DD1C20FC9FBE00D50217 /* SetRingtoneVC.swift */; };
 		21F9D18D20EDE6A10051A25F /* WallpaperDetilVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F9D18C20EDE6A10051A25F /* WallpaperDetilVC.swift */; };
 		21F9D18F20EE1D7A0051A25F /* RingtoneListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F9D18E20EE1D7A0051A25F /* RingtoneListVC.swift */; };
 		21F9D19120EE22870051A25F /* RIngtonelistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F9D19020EE22870051A25F /* RIngtonelistCell.swift */; };
@@ -89,7 +93,7 @@
 		214DC37E20F47B81003711EC /* FavouriteListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteListVC.swift; sourceTree = "<group>"; };
 		214DC38020F48DFB003711EC /* FavouriteWallpaer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteWallpaer.swift; sourceTree = "<group>"; };
 		214DC38220F49868003711EC /* FavouriteRingtone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteRingtone.swift; sourceTree = "<group>"; };
-		21552DC320DB8DA3002872B3 /* Walltones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Walltones.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		21552DC320DB8DA3002872B3 /* Walltunes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Walltunes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		21552DC620DB8DA3002872B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		21552DC820DB8DA3002872B3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		21552DCB20DB8DA3002872B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -117,6 +121,10 @@
 		217251D820EF8BC500B56B80 /* TotalringtonelistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalringtonelistCell.swift; sourceTree = "<group>"; };
 		217251D920EF8BC500B56B80 /* TotalringtonelistCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TotalringtonelistCell.xib; sourceTree = "<group>"; };
 		21A0323220F384320007D60F /* HelpVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpVC.swift; sourceTree = "<group>"; };
+		21D8DD1620FC531800D50217 /* DownloadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadVC.swift; sourceTree = "<group>"; };
+		21D8DD1820FC579500D50217 /* Downloadedringtone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloadedringtone.swift; sourceTree = "<group>"; };
+		21D8DD1A20FC5A2D00D50217 /* Downloadedwallpaper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloadedwallpaper.swift; sourceTree = "<group>"; };
+		21D8DD1C20FC9FBE00D50217 /* SetRingtoneVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetRingtoneVC.swift; sourceTree = "<group>"; };
 		21F9D18C20EDE6A10051A25F /* WallpaperDetilVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperDetilVC.swift; sourceTree = "<group>"; };
 		21F9D18E20EE1D7A0051A25F /* RingtoneListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingtoneListVC.swift; sourceTree = "<group>"; };
 		21F9D19020EE22870051A25F /* RIngtonelistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RIngtonelistCell.swift; sourceTree = "<group>"; };
@@ -178,10 +186,12 @@
 			isa = PBXGroup;
 			children = (
 				2145110720ECD9FA00956ECC /* WallpaperListVC.swift */,
+				21D8DD1C20FC9FBE00D50217 /* SetRingtoneVC.swift */,
 				21A0323220F384320007D60F /* HelpVC.swift */,
 				212FD4D520F33AB80080208C /* SettingsVC.swift */,
 				21F9D18E20EE1D7A0051A25F /* RingtoneListVC.swift */,
 				214DC37E20F47B81003711EC /* FavouriteListVC.swift */,
+				21D8DD1620FC531800D50217 /* DownloadVC.swift */,
 				2145110220ECD68F00956ECC /* sidemenuViewController.swift */,
 			);
 			path = "Sidemenu Controllers";
@@ -191,6 +201,8 @@
 			isa = PBXGroup;
 			children = (
 				2145110520ECD75600956ECC /* LoginResponse.swift */,
+				21D8DD1A20FC5A2D00D50217 /* Downloadedwallpaper.swift */,
+				21D8DD1820FC579500D50217 /* Downloadedringtone.swift */,
 				214DC38020F48DFB003711EC /* FavouriteWallpaer.swift */,
 				21F9D19420EE277F0051A25F /* Ringtonelist.swift */,
 				217251D620EF5F1800B56B80 /* Allringtonelist.swift */,
@@ -218,7 +230,7 @@
 		21552DC420DB8DA3002872B3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				21552DC320DB8DA3002872B3 /* Walltones.app */,
+				21552DC320DB8DA3002872B3 /* Walltunes.app */,
 				21552DD720DB8DA7002872B3 /* WalltonesTests.xctest */,
 				21552DE220DB8DA7002872B3 /* WalltonesUITests.xctest */,
 			);
@@ -351,9 +363,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		21552DC220DB8DA3002872B3 /* Walltones */ = {
+		21552DC220DB8DA3002872B3 /* Walltunes */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21552DEB20DB8DA7002872B3 /* Build configuration list for PBXNativeTarget "Walltones" */;
+			buildConfigurationList = 21552DEB20DB8DA7002872B3 /* Build configuration list for PBXNativeTarget "Walltunes" */;
 			buildPhases = (
 				36DA5ACC6EE1B45358B74CDC /* [CP] Check Pods Manifest.lock */,
 				21552DBF20DB8DA3002872B3 /* Sources */,
@@ -366,9 +378,9 @@
 			);
 			dependencies = (
 			);
-			name = Walltones;
+			name = Walltunes;
 			productName = Walltones;
-			productReference = 21552DC320DB8DA3002872B3 /* Walltones.app */;
+			productReference = 21552DC320DB8DA3002872B3 /* Walltunes.app */;
 			productType = "com.apple.product-type.application";
 		};
 		21552DD620DB8DA7002872B3 /* WalltonesTests */ = {
@@ -423,6 +435,9 @@
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 0940;
 						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -451,7 +466,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				21552DC220DB8DA3002872B3 /* Walltones */,
+				21552DC220DB8DA3002872B3 /* Walltunes */,
 				21552DD620DB8DA7002872B3 /* WalltonesTests */,
 				21552DE120DB8DA7002872B3 /* WalltonesUITests */,
 			);
@@ -613,6 +628,7 @@
 				21552DC920DB8DA3002872B3 /* ViewController.swift in Sources */,
 				21FA026420ECEFAA0057442E /* WallpaperCatRes.swift in Sources */,
 				21F9D19C20EE4DB60051A25F /* AllwallpaperListCell.swift in Sources */,
+				21D8DD1920FC579500D50217 /* Downloadedringtone.swift in Sources */,
 				21552DF920DB90FE002872B3 /* Reachability.m in Sources */,
 				212FD4D620F33AB80080208C /* SettingsVC.swift in Sources */,
 				217251DA20EF8BC500B56B80 /* TotalringtonelistCell.swift in Sources */,
@@ -627,10 +643,13 @@
 				21F9D19120EE22870051A25F /* RIngtonelistCell.swift in Sources */,
 				21FA026620ED01F20057442E /* WallpaperList.swift in Sources */,
 				21FA025F20ECE9F40057442E /* WallpaperListCell.swift in Sources */,
+				21D8DD1B20FC5A2D00D50217 /* Downloadedwallpaper.swift in Sources */,
 				214DC37F20F47B81003711EC /* FavouriteListVC.swift in Sources */,
+				21D8DD1D20FC9FBE00D50217 /* SetRingtoneVC.swift in Sources */,
 				213912DF20F7471F009AF23C /* RoundCornerProgressView.swift in Sources */,
 				2145110820ECD9FB00956ECC /* WallpaperListVC.swift in Sources */,
 				214510FD20ECA97700956ECC /* webservices.swift in Sources */,
+				21D8DD1720FC531800D50217 /* DownloadVC.swift in Sources */,
 				21A0323320F384320007D60F /* HelpVC.swift in Sources */,
 				212FD4D820F372E90080208C /* ImagepopUP.swift in Sources */,
 				21552DC720DB8DA3002872B3 /* AppDelegate.swift in Sources */,
@@ -658,12 +677,12 @@
 /* Begin PBXTargetDependency section */
 		21552DD920DB8DA7002872B3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 21552DC220DB8DA3002872B3 /* Walltones */;
+			target = 21552DC220DB8DA3002872B3 /* Walltunes */;
 			targetProxy = 21552DD820DB8DA7002872B3 /* PBXContainerItemProxy */;
 		};
 		21552DE420DB8DA7002872B3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 21552DC220DB8DA3002872B3 /* Walltones */;
+			target = 21552DC220DB8DA3002872B3 /* Walltunes */;
 			targetProxy = 21552DE320DB8DA7002872B3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -826,7 +845,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "/Users/ravidubey/Desktop/Walltones/Walltones/Helper/Walltones-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -853,7 +872,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "/Users/ravidubey/Desktop/Walltones/Walltones/Helper/Walltones-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -951,7 +970,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21552DEB20DB8DA7002872B3 /* Build configuration list for PBXNativeTarget "Walltones" */ = {
+		21552DEB20DB8DA7002872B3 /* Build configuration list for PBXNativeTarget "Walltunes" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21552DEC20DB8DA7002872B3 /* Debug */,
