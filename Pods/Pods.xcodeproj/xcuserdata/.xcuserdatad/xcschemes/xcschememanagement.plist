@@ -39,17 +39,17 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-Walltones.xcscheme</key>
+		<key>Pods-Walltunes.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-WalltonesTests.xcscheme</key>
+		<key>Pods-WalltunesTests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-WalltonesUITests.xcscheme</key>
+		<key>Pods-WalltunesUITests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

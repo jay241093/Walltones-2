@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A8733780E776CB9C6D51B809F71DEC30"
+               BlueprintIdentifier = "E9889E51CBA7728A66B910AD6125CC13"
                BlueprintName = "ScrollPager"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "ScrollPager.framework">

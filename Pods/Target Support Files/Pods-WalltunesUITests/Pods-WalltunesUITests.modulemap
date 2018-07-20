@@ -1,0 +1,6 @@
+framework module Pods_WalltunesUITests {
+  umbrella header "Pods-WalltunesUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
